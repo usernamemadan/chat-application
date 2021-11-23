@@ -7,6 +7,8 @@
 
 import UIKit
 
+
+
 class ConversationCell: UICollectionViewCell {
     static let reuseIdentifier = "Cell"
     
@@ -53,7 +55,8 @@ class ConversationCell: UICollectionViewCell {
         return label
     }()
     
-    
+    let checkBox = CheckBox()
+    var profilePadding = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -64,42 +67,30 @@ class ConversationCell: UICollectionViewCell {
         contentView.addSubview(timeLabel)
         profileImageView.layer.cornerRadius = 35
         contentView.clipsToBounds = true
-       // configure()
+        configureCheckBox()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+   
+    func configureCheckBox(){
+        contentView.addSubview(checkBox)
+        checkBox.translatesAutoresizingMaskIntoConstraints = false
+        checkBox.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 5).isActive = true
+        checkBox.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        checkBox.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        checkBox.widthAnchor.constraint(equalToConstant: 50).isActive = true
+    }
+    
+
+    
     override func layoutSubviews() {
         super.layoutSubviews()
 
-//        profileImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4).isActive = true
-//        profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4).isActive = true
-//        profileImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4).isActive = true
-//        profileImageView.widthAnchor.constraint(equalTo: profileImageView.heightAnchor).isActive = true
-//
-//
-//        nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4).isActive = true
-//        nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 100).isActive = true
-//        nameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -25).isActive = true
-//        nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100).isActive = true
-//
-//
-//        messageLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 25).isActive = true
-//        messageLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 100).isActive = true
-//        messageLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4).isActive = true
-//        messageLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100).isActive = true
-//
-//
-//        timeLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4).isActive = true
-//        timeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 200).isActive = true
-//        timeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30).isActive = true
-//        timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4).isActive = true
-//
-        
         profileImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = true
+        profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CGFloat(profilePadding)).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         
@@ -130,5 +121,8 @@ class ConversationCell: UICollectionViewCell {
 //        stack.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 10).isActive = true
     }
 
+    
+    
 }
+
 

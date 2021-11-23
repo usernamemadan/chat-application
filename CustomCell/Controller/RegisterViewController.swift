@@ -8,56 +8,19 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 
-class RegisterViewController: UIViewController {
-
-//    let emailTextField: UITextField = {
-//        let textField = UITextField()
-//        textField.backgroundColor = .orange
-//        textField.placeholder = "Enter the email"
-//        textField.layer.cornerRadius = 10
-//        textField.heightAnchor.constraint(equalToConstant: 50).isActive = true
-//        textField.translatesAutoresizingMaskIntoConstraints = false
-//        return textField
-//    }()
-//
-//    let emailContainverView: UIView = {
-//        let view = UIView()
-//        view.clipsToBounds = true
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        view.heightAnchor.constraint(equalToConstant: 50).isActive = true
-//        view.backgroundColor = .purple
-//
-//        let image = UIImageView()
-//        image.image = UIImage(systemName: "envelope.fill")
-//        view.addSubview(image)
-//        image.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive  = true
-//        image.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
-//        image.heightAnchor.constraint(equalToConstant: 30).isActive = true
-//        image.widthAnchor.constraint(equalToConstant: 30).isActive = true
-//        image.translatesAutoresizingMaskIntoConstraints = false
-//
-//        let textField = UITextField()
-//        textField.backgroundColor = .orange
-//        textField.placeholder = "Enter the email"
-//        textField.layer.cornerRadius = 10
-//        textField.translatesAutoresizingMaskIntoConstraints = false
-//        view.addSubview(textField)
-//        textField.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 15).isActive = true
-//        textField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -15).isActive = true
-//        textField.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-//        textField.heightAnchor.constraint(equalToConstant: 30).isActive = true
-//
-//
-//        return view
-//    }()
-//
+class RegisterViewController: UIViewController, UINavigationControllerDelegate{
     
+    // MARK: - properties
+    weak var delegate: AuthenticationDelegate?
     var emailTextField = CustomTextField(placeholder: "Email")
     var passwordTextField = CustomTextField(placeholder: "Password")
     var firstNameTextField = CustomTextField(placeholder: "First Name")
     var lastNameTextField = CustomTextField(placeholder: "Second Name")
     var alreadyHaveAnAcc = UITextField()
+    var imagePickerController = UIImagePickerController()
+    let storage = Storage.storage().reference()
     
     lazy var emailContainerView: CustomContainerView = {
        return CustomContainerView(image: UIImage(systemName: "envelope.fill")!, textField: emailTextField)
@@ -81,21 +44,22 @@ class RegisterViewController: UIViewController {
     let loginButton = CustomButton(buttonText: "Login")
     
     
-    let photoButton: UIImageView = {
+    let profileImage: UIImageView = {
         let image = UIImageView()
         image.clipsToBounds = true
-        image.image =  UIImage(systemName: "person")
+        image.image =  UIImage(systemName: "person.fill.viewfinder")
         image.tintColor = .black
         image.contentMode = .scaleToFill
         image.translatesAutoresizingMaskIntoConstraints = false
-        
         image.heightAnchor.constraint(equalToConstant: 150).isActive = true
         image.widthAnchor.constraint(equalToConstant: 150).isActive = true
-        
+
+
         return image
     }()
+
     
-    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -104,26 +68,43 @@ class RegisterViewController: UIViewController {
         configureTextField()
         configureLoginButton()
         configureNotificationObserver()
-    
+        configureDelegates()
+        imagePickerController.delegate = self
     }
     
-    func configureNotificationObserver(){
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    //MARK: - actions
+    @objc func addImage(){
+    
+        print("preseting picker")
+        self.imagePickerController.allowsEditing = true
+        self.present(self.imagePickerController, animated:  true, completion:  nil)
+    }
+    
+    @objc func signupButtonPressed(){
+       signup()
+    }
+    
+    @objc func loginButtonPressed(){
+        dismiss(animated: true, completion: nil)
     }
     
     @objc func  keyboardWillShow(){
-        print("keyboard will show")
         if view.frame.origin.y == 0 {
             self.view.frame.origin.y -= 80
         }
     }
     
     @objc func keyboardWillHide(){
-        print("keyboaard will hide")
         if view.frame.origin.y == -80 {
             self.view.frame.origin.y = 0
         }
+    }
+  
+    
+    // MARK: - helper functions
+    func configureNotificationObserver(){
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func configureSignupButton(){
@@ -148,10 +129,13 @@ class RegisterViewController: UIViewController {
     
     func configureUI(){
         
-        view.addSubview(photoButton)
-        photoButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 80).isActive = true
-        photoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        view.addSubview(profileImage)
+        profileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 80).isActive = true
+        profileImage.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
+        let tap = UITapGestureRecognizer(target: self, action: #selector(addImage))
+        profileImage.addGestureRecognizer(tap)
+        profileImage.isUserInteractionEnabled = true
         
         let stack = UIStackView(arrangedSubviews: [emailContainerView, passwordContainerView, firstNameContainerView, lastNameContainerView])
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -159,12 +143,9 @@ class RegisterViewController: UIViewController {
         stack.spacing = 15
         view.addSubview(stack)
         
-        
-        stack.topAnchor.constraint(equalTo: photoButton.bottomAnchor, constant: 30).isActive = true
+        stack.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 30).isActive = true
         stack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 40).isActive = true
         stack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -40).isActive = true
-        
-        
     }
     
     func configureTextField(){
@@ -176,30 +157,84 @@ class RegisterViewController: UIViewController {
         
     }
     
-    @objc func signupButtonPressed(){
-        Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { (result, err) in
-            if err != nil {
-                print("Error creating user")
+    func configureDelegates(){
+        emailTextField.delegate = self
+        passwordTextField.delegate = self
+        firstNameTextField.delegate = self
+        lastNameTextField.delegate = self
+    }
+ 
+    func signup(){
+        guard isInputValid() == true else { return }
+        
+        guard let email = emailTextField.text, let password = passwordTextField.text, let firstName = firstNameTextField.text, let lastName = lastNameTextField.text else { return }
+                
+        NetworkManager.shared.SignUserIn(withEmail: email, password: password) { result, error in
+            if error != nil {
+                print( error!.localizedDescription)
             }
             else {
-
-                let db = Firestore.firestore()
-                db.collection("users").document(result!.user.uid).setData(["firstname":self.firstNameTextField.text!, "lastname":self.lastNameTextField.text!, "uid": result!.user.uid ]) { error in
-                    if error != nil {
-                        // Show error message
-                        print("Error saving user data")
-                    }
+                guard let imageData = self.profileImage.image?.pngData() else { return }
+                NetworkManager.shared.uploadImage(imageData: imageData) {
+                    guard let urlString = UserDefaults.standard.value(forKey: "url") as? String else { return }
+                    guard let uid = Auth.auth().currentUser?.uid else { return }
+                    
+                    let values = ["uid": uid, "first_name": firstName, "last_name": lastName, "email": email, "profile_image_url": urlString, "timestamp": Date()] as [String : Any]
+                    let user = User(dictionary: values)
+                    DatabaseManager.shared.insertUser(with: user)
+                    self.delegate?.authenticationDidComplete()
+                    self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
                 }
-                
-                // Transition to the home screen
-                self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
             }
-
         }
     }
     
-    @objc func loginButtonPressed(){
-        dismiss(animated: true, completion: nil)
+    func isInputValid() -> Bool {
+        guard let email = emailTextField.text, let password = passwordTextField.text else { return false}
+        guard email.isValidEmail(), password.isValidPassword() else {
+            showErrorAlert(error: "Please enter valid email and password")
+            return false
+        }
+        guard let firstName = firstNameTextField.text, let lastName = lastNameTextField.text else { return false }
+        guard firstName != "", lastName != "" else {
+            showErrorAlert(error: "First name and last name connot be empty")
+            return false
+        }
+        
+        return true
+    }
+    
+    func showErrorAlert(error: String) {
+        let dialogMessage = UIAlertController(title: "error", message: error, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .default, handler: .none)
+        dialogMessage.addAction(ok)
+        self.present(dialogMessage, animated: true, completion: nil)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+}
+
+//MARK: - UITextfieldDelegate
+extension RegisterViewController: UITextFieldDelegate{
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+}
+
+//MARK: - UIImagePickerControllerDelegate
+extension RegisterViewController: UIImagePickerControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true, completion: nil)
+        guard let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
+        profileImage.image = image
     }
 
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true,completion: nil)
+    }
+    
 }

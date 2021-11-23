@@ -12,9 +12,9 @@ protocol AuthenticationDelegate: class {
     func authenticationDidComplete()
 }
 
-
 class LoginViewController: UIViewController {
     
+    // MARK: - properties
     weak var delegate: AuthenticationDelegate?
     var emailTextField = CustomTextField(placeholder: "Email")
     var passwordTextField = CustomTextField(placeholder: "Password")
@@ -46,6 +46,7 @@ class LoginViewController: UIViewController {
         return image
     }()
  
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -53,10 +54,37 @@ class LoginViewController: UIViewController {
         configureLoginButton()
         configureTextField()
         configureSignupButton()
+        configureDelegates()
     }
     
+    //MARK: - actions
+    @objc func loginButtonPressed(){
+        guard let email = emailTextField.text, let password = passwordTextField.text else { return }
+        guard email.isValidEmail(), password.isValidPassword() else {
+            showAlert(error: "Please enter valid email and password")
+            return
+        }
+        
+        NetworkManager.shared.logUserIn(withEmail: email, password: password) { result, error in
+            guard error == nil else {
+                self.showAlert(error: error!.localizedDescription)
+                return
+            }
+            self.delegate?.authenticationDidComplete()
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
     
- 
+    @objc func signupButtonPressed(){
+        presentRegisterScreen()
+    }
+    
+    // MARK: - helper functions
+    func configureDelegates(){
+        emailTextField.delegate = self
+        passwordTextField.delegate = self
+    }
+    
     func configureLoginButton(){
         view.addSubview(loginButton)
         loginButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
@@ -86,14 +114,12 @@ class LoginViewController: UIViewController {
         
     }
     
-    
     func configureUI(){
        
         view.addSubview(chatLogo)
         chatLogo.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10).isActive = true
         chatLogo.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
 
-        
         let stack = UIStackView(arrangedSubviews: [emailContainerView, passwordContainerView])
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
@@ -104,23 +130,29 @@ class LoginViewController: UIViewController {
         stack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 50).isActive = true
         stack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -50).isActive = true
     }
-    
-    @objc func loginButtonPressed(){
-        Auth.auth().signIn(withEmail: emailTextField.text!, password: passwordTextField.text!) { result, error in
-            guard error == nil else { return }
-            self.delegate?.authenticationDidComplete()
-            self.dismiss(animated: true, completion: nil)
-        }
-    }
    
-    @objc func signupButtonPressed(){
-        presentRegisterScreen()
-    }
-    
     func presentRegisterScreen(){
         let registerVC = RegisterViewController()
         registerVC.modalPresentationStyle = .fullScreen
         present(registerVC, animated: true, completion: nil)
     }
+    
+    func showAlert(error: String) {
+        let dialogMessage = UIAlertController(title: "Error", message: error, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .default, handler: .none)
+        dialogMessage.addAction(ok)
+        self.present(dialogMessage, animated: true, completion: nil)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+}
 
+//MARK: - UITextfieldDelegate
+extension LoginViewController: UITextFieldDelegate{
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
 }
