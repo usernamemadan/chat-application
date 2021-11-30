@@ -25,13 +25,13 @@ class ChatController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
     var messageTextField = CustomTextField(placeholder: "Type the message here..")
     
+    
     lazy var sendMessageContainerView: SendMessageContainerView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "arrowtriangle.forward.fill")!
         let tap = UITapGestureRecognizer(target: self, action: #selector(HandleSendMessage))
         imageView.addGestureRecognizer(tap)
         imageView.isUserInteractionEnabled = true
-        
         return SendMessageContainerView(iv: imageView, textField: messageTextField)
         
     }()
@@ -68,6 +68,8 @@ class ChatController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let values = [ "msgId": msgId, "fromId": uid, "toId": toId, "text": text,"timestamp": Date()] as [String : Any]
         let message = Message(dictionary: values)
         DatabaseManager.shared.addMessage(with: message)
+        DatabaseManager.shared.addRecentMessage(with: message)
+        messageTextField.text = ""
     }
     
     @objc func  keyboardWillShow(){

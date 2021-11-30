@@ -27,14 +27,15 @@ extension String{
     }
 }
 
-//public extension UIAlertController {
-//    func show() {
-//        let win = UIWindow(frame: UIScreen.main.bounds)
-//        let vc = UIViewController()
-//        vc.view.backgroundColor = .clear
-//        win.rootViewController = vc
-//        win.windowLevel = UIWindow.Level.alert + 1  // Swift 3-4: UIWindowLevelAlert + 1
-//        win.makeKeyAndVisible()
-//        vc.present(self, animated: true, completion: nil)
-//    }
-//}
+extension Date {
+   func getFormattedDate(format: String) -> String {
+        let dateformat = DateFormatter()
+        dateformat.dateFormat = format
+        return dateformat.string(from: self)
+    }
+    
+    func days(from date: Date) -> Int {
+          return Calendar.current.dateComponents([.day], from: date, to: self).day ?? 0
+      }
+}
+

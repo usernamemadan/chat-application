@@ -9,18 +9,36 @@ import UIKit
 import FirebaseAuth
 
 
+
 class ConversationViewController: UIViewController {
 
     // MARK: - properties
     var collecionView: UICollectionView!
     let ai = UIActivityIndicatorView(style: .large)
+    var recentMessages: [Message] = []
+    var recentUsers: [User] = []
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "ChatApp"
         view.backgroundColor = .white
-        self.isLoggedIn()
+        isLoggedIn()
+       
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        DatabaseManager.shared.getRecentMessages { recentMessages in
+            self.recentMessages = recentMessages
+        
+            DispatchQueue.main.async {
+                self.collecionView.reloadData()
+            }
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        listenerRef?.remove()
     }
     
     //MARK: - actions
@@ -45,9 +63,6 @@ class ConversationViewController: UIViewController {
     var showCheckBox = false
     
     @objc func editTapped(){
-        
-//        navigationController?.pushViewController(ChatController(), animated: true)
-        
         showCheckBox = !showCheckBox
         DispatchQueue.main.async {
             self.viewDidLoad()
@@ -88,7 +103,7 @@ class ConversationViewController: UIViewController {
     func configureUICollectionView(){
         collecionView = UICollectionView(frame: view.bounds, collectionViewLayout: UICollectionViewFlowLayout())
         view.addSubview(collecionView)
-        collecionView.backgroundColor = .systemGreen
+        collecionView.backgroundColor = .darkGray
         collecionView.delegate = self
         collecionView.dataSource = self
         collecionView.register(ConversationCell.self, forCellWithReuseIdentifier: ConversationCell.reuseIdentifier)
@@ -109,6 +124,24 @@ class ConversationViewController: UIViewController {
             ai.stopAnimating()
             configureUI()
         }
+    }
+    
+    func setup(user: User, message: Message, indexPath: IndexPath){
+        let cell = self.collecionView.cellForItem(at: indexPath) as! ConversationCell
+        cell.nameLabel.text = user.firstName + user.lastName
+        cell.messageLabel.text = message.text
+        cell.profileImageView.image = UIImage(systemName: "person.fill")
+        
+        NetworkManager.shared.downloadImage(fromURL: user.profileImageUrl) { image in
+             if image != nil {
+                 DispatchQueue.main.async {
+                     cell.profileImageView.image = image
+                 }
+             }
+         }
+        let date = message.timestamp.dateValue()
+        let time = Date().days(from: date) > 0 ? date.getFormattedDate(format: "MM/dd/yyyy") : date.getFormattedDate(format: "HH:mm")
+        cell.timeLabel.text = time
     }
     
     func presentLoginScreen(){
@@ -139,12 +172,17 @@ extension ConversationViewController: AuthenticationDelegate{
 
 extension ConversationViewController: UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return recentMessages.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collecionView.dequeueReusableCell(withReuseIdentifier: ConversationCell.reuseIdentifier, for: indexPath) as! ConversationCell
         cell.backgroundColor = .darkGray
+        cell.delegate = self
+        DatabaseManager.shared.fetchUser(with: recentMessages[indexPath.row]) { user in
+          //  cell.setup(user: user, message: self.recentMessages[indexPath.row], indexPath: indexPath)
+            self.setup(user: user, message: self.recentMessages[indexPath.row], indexPath: indexPath)
+        }
 
         if showCheckBox{
             cell.profilePadding = 55
@@ -155,7 +193,15 @@ extension ConversationViewController: UICollectionViewDataSource{
             cell.checkBox.isHidden = true
         }
         return cell
+    }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        DatabaseManager.shared.fetchUser(with: recentMessages[indexPath.row]) { user in
+            let vc = ChatController()
+            vc.user = user
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+       
     }
 }
 
@@ -171,4 +217,16 @@ extension ConversationViewController: UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
+}
+
+extension ConversationViewController: presentImageDelegate{
+
+    func presentImage(image: UIImage) {
+        print("present image clicked")
+        let vc = ImageViewController()
+        vc.imageView.image = image
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    
 }
