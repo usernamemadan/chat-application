@@ -42,7 +42,7 @@ struct DatabaseManager {
                 if change.type == .added{
                    
                     let documentData = change.document.data()
-                    let values = ["msgId": documentData["msgId"], "fromId": documentData["fromId"], "toId": documentData["toId"], "text": documentData["text"],"timestamp": documentData["timestamp"] as! Timestamp] as [String : Any]
+                    let values = ["msgId": documentData["msgId"], "fromId": documentData["fromId"], "toId": documentData["toId"], "text": documentData["text"],"timestamp": documentData["timestamp"] as! Timestamp, "imageUrl": documentData["imageUrl"]] as [String : Any]
                     let message = Message(dictionary: values)
                     messages.append(message)
                     completion(messages)

@@ -15,6 +15,7 @@ class Message: NSObject {
     var toId: String
     var text: String
     var timestamp: Timestamp!
+    var imageUrl: String?
     
     init(dictionary: [AnyHashable: Any]) {
         self.msgId = dictionary["msgId"] as! String
@@ -22,6 +23,7 @@ class Message: NSObject {
         self.toId = dictionary["toId"] as! String
         self.text = dictionary["text"] as! String
         self.timestamp = dictionary["timestamp"] as? Timestamp ?? Timestamp(date: Date())
+        self.imageUrl = dictionary["imageUrl"] as? String
     }
     
     var dictionary: [String: Any] {
@@ -30,7 +32,8 @@ class Message: NSObject {
             "fromId": fromId,
             "toId": toId,
             "text": text,
-            "timestamp": timestamp!
+            "timestamp": timestamp!,
+            "imageUrl": imageUrl
         ]
     }
 }

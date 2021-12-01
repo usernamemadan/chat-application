@@ -92,8 +92,6 @@ extension SelectContactsViewController: UICollectionViewDataSource{
         vcArray!.append(vc)
         self.navigationController?.setViewControllers(vcArray!, animated: false)
         
-//        navigationController?.popViewController(animated: false)
-//        navigationController?.pushViewController(vc, animated: false)
     }
 }
 
