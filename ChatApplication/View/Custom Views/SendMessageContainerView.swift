@@ -11,7 +11,8 @@ class SendMessageContainerView: UIView {
     init(iv: UIImageView, photoButton: UIImageView, textField: UITextField) {
         super.init(frame: .zero)
         tintColor = .black
-        heightAnchor.constraint(equalToConstant: 50).isActive = true
+    
+   //     heightAnchor.constraint(equalToConstant: 50).isActive = true
         layer.borderColor = UIColor.black.cgColor
         layer.borderWidth = 1
         layer.cornerRadius = 5

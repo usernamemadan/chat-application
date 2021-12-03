@@ -16,6 +16,7 @@ class Message: NSObject {
     var text: String
     var timestamp: Timestamp!
     var imageUrl: String?
+    var image: UIImage?
     
     init(dictionary: [AnyHashable: Any]) {
         self.msgId = dictionary["msgId"] as! String

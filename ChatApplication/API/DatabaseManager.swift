@@ -42,10 +42,19 @@ struct DatabaseManager {
                 if change.type == .added{
                    
                     let documentData = change.document.data()
-                    let values = ["msgId": documentData["msgId"], "fromId": documentData["fromId"], "toId": documentData["toId"], "text": documentData["text"],"timestamp": documentData["timestamp"] as! Timestamp, "imageUrl": documentData["imageUrl"]] as [String : Any]
-                    let message = Message(dictionary: values)
+                    let message = Message(dictionary: documentData)
+            //        let message = Message(dictionary: values)
                     messages.append(message)
-                    completion(messages)
+                    guard let imageUrl = message.imageUrl else {
+                        return completion(messages)
+                    }
+                    
+                    NetworkManager.shared.downloadImage(fromURL: imageUrl) { image in
+                        if image != nil{
+                            message.image = image
+                            completion(messages)
+                        }
+                    }
                 }
             }
         }

@@ -24,8 +24,16 @@ class ConversationViewController: UIViewController {
         self.title = "ChatApp"
         view.backgroundColor = .white
         isLoggedIn()
+        
        
     }
+    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask{
+        return .portrait
+    }
+    
+//    override var shouldAutorotate: Bool {
+//        return false
+//    }
     
     override func viewDidAppear(_ animated: Bool) {
         DatabaseManager.shared.getRecentMessages { recentMessages in
@@ -102,6 +110,7 @@ class ConversationViewController: UIViewController {
     
     func configureUICollectionView(){
         collecionView = UICollectionView(frame: view.bounds, collectionViewLayout: UICollectionViewFlowLayout())
+    
         view.addSubview(collecionView)
         collecionView.backgroundColor = .darkGray
         collecionView.delegate = self

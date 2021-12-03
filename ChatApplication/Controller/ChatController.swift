@@ -11,11 +11,12 @@ import FirebaseAuth
 
 class ChatController: UIViewController, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate  {
 
-    fileprivate let cellId = "id123"
+    fileprivate let cellId = "id1"
+    fileprivate let cellId2 = "id2"
     var user: User?
     var messages: [Message] = []
     
-    var images = [#imageLiteral(resourceName: "im3"), #imageLiteral(resourceName: "im2"), #imageLiteral(resourceName: "image1")]
+//    var images = [#imageLiteral(resourceName: "im3"), #imageLiteral(resourceName: "im2"), #imageLiteral(resourceName: "image1")]
 
     let tableView: UITableView = {
         let tv = UITableView()
@@ -42,7 +43,6 @@ class ChatController: UIViewController, UITableViewDelegate, UITableViewDataSour
         photoButton.addGestureRecognizer(tapOnPhoto)
         photoButton.isUserInteractionEnabled = true
         
-        
         return SendMessageContainerView(iv: imageView, photoButton: photoButton, textField: messageTextField)
         
     }()
@@ -59,19 +59,48 @@ class ChatController: UIViewController, UITableViewDelegate, UITableViewDataSour
         navigationController?.navigationBar.prefersLargeTitles = true
         
         tableView.register(MessageCell.self, forCellReuseIdentifier: cellId)
+        tableView.register(ImageCell.self, forCellReuseIdentifier: cellId2)
         tableView.separatorStyle = .none
-        configureMessageLabel()
-        configureTableView()
-        configureNotificationObserver()
+  //      configureMessageLabel()
+   //     configureTableView()
+  //      configureNotificationObserver()
+        
+        view.addSubview(tableView)
+        tableView.isUserInteractionEnabled = true
+        tableView.keyboardDismissMode = .interactive
+        tableView.alwaysBounceVertical = true
         
         DatabaseManager.shared.getMessages(messageId: getMessageId()) { messages in
             self.messages = messages
-            self.tableView.reloadData()
-         //   let lastIndex = NSIndexPath(row: self.messages.count - 1, section: 0)
-           // self.tableView.scrollToRow(at: lastIndex as IndexPath, at: .bottom, animated: false)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                let lastIndex = NSIndexPath(row: self.messages.count - 1, section: 0)
+                self.tableView.scrollToRow(at: lastIndex as IndexPath, at: .bottom, animated: true)
+            }
+           
         }
+    
+        
         
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.frame = view.bounds
+    }
+    
+    override var inputAccessoryView: UIView? {
+         get {
+             sendMessageContainerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 100)
+             return sendMessageContainerView
+         }
+
+     }
+
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+    
     
     @objc func pickPhoto(){
         self.imagePickerController.allowsEditing = true
@@ -91,17 +120,17 @@ class ChatController: UIViewController, UITableViewDelegate, UITableViewDataSour
         messageTextField.text = ""
     }
     
-    @objc func  keyboardWillShow(){
-        if view.frame.origin.y == 0 {
-            self.view.frame.origin.y -= 350
-        }
-    }
-    
-    @objc func keyboardWillHide(){
-        if view.frame.origin.y == -350 {
-            self.view.frame.origin.y = 0
-        }
-    }
+//    @objc func  keyboardWillShow(){
+//        if view.frame.origin.y == 0 {
+//            self.view.frame.origin.y -= 350
+//        }
+//    }
+//
+//    @objc func keyboardWillHide(){
+//        if view.frame.origin.y == -350 {
+//            self.view.frame.origin.y = 0
+//        }
+//    }
     
     func getMessageId() -> String {
         guard let uid = Auth.auth().currentUser?.uid else { return "" }
@@ -109,10 +138,10 @@ class ChatController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return uid > toId ? uid+toId : toId+uid
     }
     
-    func configureNotificationObserver(){
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
+//    func configureNotificationObserver(){
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+//    }
     
   
     
@@ -128,12 +157,15 @@ class ChatController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func configureTableView(){
         view.addSubview(tableView)
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: sendMessageContainerView.topAnchor),
-            tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
-            tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor)
-        ])
+        tableView.isUserInteractionEnabled = true
+        tableView.keyboardDismissMode = .interactive
+        tableView.frame = view.bounds
+//        NSLayoutConstraint.activate([
+//            tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
+//            tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+//            tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+//            tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor)
+//        ])
     }
     
 
@@ -141,29 +173,24 @@ class ChatController: UIViewController, UITableViewDelegate, UITableViewDataSour
        return messages.count
     }
     
-   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! MessageCell
-       cell.chatMessage = messages[indexPath.row]
-       
-       if let imageUrl = messages[indexPath.row].imageUrl {
-           NetworkManager.shared.downloadImage(fromURL: imageUrl) { image in
-               if image != nil{
-                   DispatchQueue.main.async {
-                       cell.imageView.image = image
-                   }
-               }
-              
-           }
-       }
-       
- //      let height = tableView.frame.width / images[indexPath.row].getImageRatio()
-  //     cell.mainImageView.image = images[indexPath.row]
-       return cell
+    
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if messages[indexPath.row].imageUrl == nil{
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! MessageCell
+            cell.chatMessage = messages[indexPath.row]
+            return cell
+        }
+        else{
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellId2, for: indexPath) as! ImageCell
+            cell.chatMessage = messages[indexPath.row]
+            DispatchQueue.main.async {
+                cell.chatImageView.image = self.messages[indexPath.row].image
+            }
+            return cell
+        }
+        
     }
-
-    
-    
-    
 }
 
 //MARK: - UIImagePickerControllerDelegate
