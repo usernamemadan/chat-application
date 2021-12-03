@@ -8,7 +8,7 @@
 import UIKit
 
 class SendMessageContainerView: UIView {
-    init(iv: UIImageView, photoButton: UIImageView, textField: UITextField) {
+    init(imageview: UIImageView, photoButton: UIImageView, textField: UITextField) {
         super.init(frame: .zero)
         tintColor = .black
     
@@ -19,25 +19,21 @@ class SendMessageContainerView: UIView {
         backgroundColor = .white
         translatesAutoresizingMaskIntoConstraints = false
         
-        addSubview(iv)
+        addSubview(imageview)
         
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        iv.rightAnchor.constraint(equalTo: rightAnchor, constant: -15) .isActive = true
-        iv.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        iv.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        imageview.translatesAutoresizingMaskIntoConstraints = false
+        imageview.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        imageview.rightAnchor.constraint(equalTo: rightAnchor, constant: -15) .isActive = true
+        imageview.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        imageview.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
-    
-
         addSubview(photoButton)
         
         photoButton.translatesAutoresizingMaskIntoConstraints = false
-        photoButton.rightAnchor.constraint(equalTo: iv.leftAnchor, constant: -15).isActive = true
+        photoButton.rightAnchor.constraint(equalTo: imageview.leftAnchor, constant: -15).isActive = true
         photoButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
         photoButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         photoButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        
-        
         
         addSubview(textField)
         
@@ -46,7 +42,6 @@ class SendMessageContainerView: UIView {
         textField.leftAnchor.constraint(equalTo: leftAnchor,constant: 10).isActive = true
         textField.rightAnchor.constraint(equalTo: photoButton.leftAnchor, constant: -10).isActive = true
         textField.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        
     }
     
     required init?(coder: NSCoder) {

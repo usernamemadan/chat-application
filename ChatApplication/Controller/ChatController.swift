@@ -33,7 +33,7 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
         photoButton.addGestureRecognizer(tapOnPhoto)
         photoButton.isUserInteractionEnabled = true
         
-        return SendMessageContainerView(iv: imageView, photoButton: photoButton, textField: messageTextField)
+        return SendMessageContainerView(imageview: imageView, photoButton: photoButton, textField: messageTextField)
     }()
     
     override func viewDidLoad() {

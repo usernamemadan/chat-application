@@ -19,8 +19,6 @@ class ImageViewController: UIViewController {
         view.backgroundColor = .black
         configureImageView()
         addGesture()
-        
-        // Do any additional setup after loading the view.
     }
     
     func configureImageView(){

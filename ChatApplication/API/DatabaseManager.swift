@@ -43,7 +43,6 @@ struct DatabaseManager {
                    
                     let documentData = change.document.data()
                     let message = Message(dictionary: documentData)
-            //        let message = Message(dictionary: values)
                     messages.append(message)
                     guard let imageUrl = message.imageUrl else {
                         return completion(messages)
@@ -70,24 +69,21 @@ struct DatabaseManager {
                 print(error!.localizedDescription)
                 return
             }
-            print("message added *******************")
+           
             guard let snapshot = snapshot else { return }
             var recentMessages: [Message] = []
           
             for document in snapshot.documents{
                 let documentData = document.data()
-                let values = ["msgId": documentData["msgId"], "fromId": documentData["fromId"], "toId": documentData["toId"], "text": documentData["text"],"timestamp": documentData["timestamp"] as! Timestamp] as [String : Any]
-                let message = Message(dictionary: values)
+                let message = Message(dictionary: documentData)
                 if !message.msgId.contains(uid) { continue }
                 recentMessages.append(message)
-                let date = message.timestamp.dateValue()
-                let time = Date().days(from: date) > 0 ? date.getFormattedDate(format: "MM/dd/yyyy") : date.getFormattedDate(format: "HH:mm")
             }
             completion(recentMessages)
         }
     }
     
-    func fetchUser(with message: Message, completion:@escaping(User) -> Void){
+    func fetchUser(withMessage message: Message, completion:@escaping(User) -> Void){
         guard let uid = Auth.auth().currentUser?.uid else { return }
         var otherUserId = ""
         if message.fromId == uid {
@@ -96,18 +92,16 @@ struct DatabaseManager {
         else{
             otherUserId = message.fromId
         }
-   //     print(otherUserId)
+        
         db.collection("users").document(otherUserId).getDocument { snapshot, error in
             if error != nil{
-                print("ther is an error")
                 print(error!.localizedDescription)
                 return
             }
             guard let snapshot = snapshot else { return }
         
             guard let documentData = snapshot.data() else { return }
-            let values = ["uid": documentData["uid"], "first_name": documentData["first_name"], "last_name": documentData["last_name"], "email": documentData["email"], "profile_image_url": documentData["profile_image_url"], "timestamp": documentData["timestamp"] as! Timestamp] as [String : Any]
-            let user = User(dictionary: values)
+            let user = User(dictionary: documentData)
             completion(user)
         }
         
@@ -127,9 +121,8 @@ struct DatabaseManager {
         
             for document in snapshot.documents{
                 let documentData = document.data()
-                let values = ["uid": documentData["uid"], "first_name": documentData["first_name"], "last_name": documentData["last_name"], "email": documentData["email"], "profile_image_url": documentData["profile_image_url"], "timestamp": documentData["timestamp"] as! Timestamp] as [String : Any]
                 
-                let user = User(dictionary: values)
+                let user = User(dictionary: documentData)
                 users.append(user)
                
             }

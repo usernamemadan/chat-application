@@ -182,7 +182,8 @@ extension ConversationViewController: UICollectionViewDataSource{
         let cell = collecionView.dequeueReusableCell(withReuseIdentifier: ConversationCell.reuseIdentifier, for: indexPath) as! ConversationCell
         cell.backgroundColor = .darkGray
         cell.delegate = self
-        DatabaseManager.shared.fetchUser(with: recentMessages[indexPath.row]) { user in
+        
+        DatabaseManager.shared.fetchUser(withMessage: recentMessages[indexPath.row]) { user in
             self.setup(user: user, message: self.recentMessages[indexPath.row], indexPath: indexPath)
         }
 
@@ -198,7 +199,7 @@ extension ConversationViewController: UICollectionViewDataSource{
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        DatabaseManager.shared.fetchUser(with: recentMessages[indexPath.row]) { user in
+        DatabaseManager.shared.fetchUser(withMessage: recentMessages[indexPath.row]) { user in
             let vc = ChatController()
             vc.user = user
             self.navigationController?.pushViewController(vc, animated: true)
