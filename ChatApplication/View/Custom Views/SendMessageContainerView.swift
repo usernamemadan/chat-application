@@ -9,7 +9,8 @@ import UIKit
 
 class SendMessageContainerView: UIView {
     init(imageview: UIImageView, photoButton: UIImageView, textField: UITextField) {
-        super.init(frame: .zero)
+        super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
+      //  super.init(frame: .zero)
         tintColor = .black
     
    //     heightAnchor.constraint(equalToConstant: 50).isActive = true

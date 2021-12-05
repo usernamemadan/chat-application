@@ -14,7 +14,7 @@ class ConversationViewController: UIViewController {
 
     // MARK: - properties
     var collecionView: UICollectionView!
-    let ai = UIActivityIndicatorView(style: .large)
+    let activityIndicator = UIActivityIndicatorView(style: .large)
     var recentMessages: [Message] = []
     var recentUsers: [User] = []
     var profilePadding = 0
@@ -49,13 +49,7 @@ class ConversationViewController: UIViewController {
     
     //MARK: - actions
     @objc func logout(){
-        do{
-            try Auth.auth().signOut();
-            showAlert(error: "successfully logged out")
-        } catch let logoutError {
-            print(logoutError)
-        }
-       
+        showAlert(error: "Do you want to logout?")
     }
     
     @objc func selectContactTapped(){
@@ -74,10 +68,10 @@ class ConversationViewController: UIViewController {
     // MARK: - helper functions
    
     func configureActivityIndicator(){
-        ai.center = self.view.center
-        ai.startAnimating()
-        ai.hidesWhenStopped = true
-        view.addSubview(ai)
+        activityIndicator.center = self.view.center
+        activityIndicator.startAnimating()
+        activityIndicator.hidesWhenStopped = true
+        view.addSubview(activityIndicator)
     }
     
     func configureNavigationBar() {
@@ -96,9 +90,9 @@ class ConversationViewController: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(logout))
         let add = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(selectContactTapped))
         let edit = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editTapped))
-        navigationItem.rightBarButtonItems = [edit, add]
+        let addGroup = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(createGroup))
+        navigationItem.rightBarButtonItems = [edit, add, addGroup]
     }
-    
     
     func configureUICollectionView(){
         collecionView = UICollectionView(frame: view.bounds, collectionViewLayout: UICollectionViewFlowLayout())
@@ -117,13 +111,18 @@ class ConversationViewController: UIViewController {
     func isLoggedIn(){
         configureActivityIndicator()
         if Auth.auth().currentUser?.uid == nil {
-            ai.stopAnimating()
+            activityIndicator.stopAnimating()
             presentLoginScreen()
         }
         else {
-            ai.stopAnimating()
+            activityIndicator.stopAnimating()
             configureUI()
         }
+    }
+    
+    @objc func createGroup(){
+        let vc = CreateGroupController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func setup(user: User, message: Message, indexPath: IndexPath){
@@ -156,10 +155,18 @@ class ConversationViewController: UIViewController {
     
     func showAlert(error: String) {
         let dialogMessage = UIAlertController(title: "Alert", message: error, preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+        let logout = UIAlertAction(title: "Logout", style: .default, handler: { (action) -> Void in
+            do{
+                try Auth.auth().signOut();
+                
+            } catch let logoutError {
+                print(logoutError)
+            }
             self.presentLoginScreen()
          })
-        dialogMessage.addAction(ok)
+        let cancel = UIAlertAction(title: "cancel", style: .cancel)
+        dialogMessage.addAction(logout)
+        dialogMessage.addAction(cancel)
         self.present(dialogMessage, animated: true, completion: nil)
     }
 
@@ -213,23 +220,13 @@ extension ConversationViewController: UICollectionViewDelegateFlowLayout{
         return CGSize(width: view.frame.width, height: 80)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
 }
 
 
 extension ConversationViewController: presentImageDelegate{
-
     func presentImage(image: UIImage) {
         let vc = ImageViewController()
         vc.imageView.image = image
         navigationController?.pushViewController(vc, animated: true)
     }
-    
-    
 }

@@ -16,6 +16,7 @@ class User: NSObject {
     var email: String
     var profileImageUrl: String
     var timestamp: Timestamp!
+    var isGroup: Bool
     
     init(dictionary: [AnyHashable: Any]) {
         self.uid = dictionary["uid"] as! String
@@ -24,6 +25,7 @@ class User: NSObject {
         self.email = dictionary["email"] as! String
         self.profileImageUrl = dictionary["profile_image_url"] as! String
         self.timestamp = dictionary["timestamp"] as? Timestamp ?? Timestamp(date: Date())
+        self.isGroup = dictionary["isGroup"] as! Bool
     }
     
     var dictionary: [String: Any] {
@@ -33,7 +35,8 @@ class User: NSObject {
             "last_name": lastName,
             "email": email,
             "profile_image_url": profileImageUrl,
-            "timestamp": timestamp!
+            "timestamp": timestamp!,
+            "isGroup": isGroup
         ]
     }
 }

@@ -42,6 +42,7 @@ class ImageViewController: UIViewController {
             imageView.center = view.center
         }
     }
+    
 }
 
 

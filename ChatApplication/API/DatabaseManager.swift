@@ -16,8 +16,7 @@ struct DatabaseManager {
     let db = Firestore.firestore()
     
     public func insertUser(with user: User) {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        db.collection("users").document(uid).setData(user.dictionary)
+        db.collection("users").document(user.uid).setData(user.dictionary)
     }
     
     func addMessage(with message: Message) {
@@ -76,7 +75,7 @@ struct DatabaseManager {
             for document in snapshot.documents{
                 let documentData = document.data()
                 let message = Message(dictionary: documentData)
-                if !message.msgId.contains(uid) { continue }
+                if !message.msgId.contains(uid) && message.toId != message.msgId { continue }
                 recentMessages.append(message)
             }
             completion(recentMessages)
@@ -86,12 +85,17 @@ struct DatabaseManager {
     func fetchUser(withMessage message: Message, completion:@escaping(User) -> Void){
         guard let uid = Auth.auth().currentUser?.uid else { return }
         var otherUserId = ""
-        if message.fromId == uid {
+   
+        if message.msgId == message.toId {
+            otherUserId = message.toId
+        }
+        else if message.fromId == uid {
             otherUserId = message.toId
         }
         else{
             otherUserId = message.fromId
         }
+
         
         db.collection("users").document(otherUserId).getDocument { snapshot, error in
             if error != nil{
@@ -127,6 +131,20 @@ struct DatabaseManager {
                
             }
             completion(users)
+        }
+    }
+    
+    func fetchUser(uid: String, completion:@escaping(User) -> Void){
+        db.collection("users").document(uid).getDocument { snapshot, error in
+            if error != nil{
+                print(error!.localizedDescription)
+                return
+            }
+            guard let snapshot = snapshot else { return }
+        
+            guard let documentData = snapshot.data() else { return }
+            let user = User(dictionary: documentData)
+            completion(user)
         }
     }
     

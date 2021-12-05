@@ -179,7 +179,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate{
                     guard let urlString = UserDefaults.standard.value(forKey: "url") as? String else { return }
                     guard let uid = Auth.auth().currentUser?.uid else { return }
                     
-                    let values = ["uid": uid, "first_name": firstName, "last_name": lastName, "email": email, "profile_image_url": urlString, "timestamp": Date()] as [String : Any]
+                    let values = ["uid": uid, "first_name": firstName, "last_name": lastName, "email": email, "profile_image_url": urlString, "timestamp": Date(), "isGroup": false] as [String : Any]
                     let user = User(dictionary: values)
                     DatabaseManager.shared.insertUser(with: user)
                     self.delegate?.authenticationDidComplete()

@@ -16,6 +16,7 @@ class Message: NSObject {
     var text: String
     var timestamp: Timestamp!
     var imageUrl: String?
+ //   var isGroupMessage: Bool
     var image: UIImage?
     
     init(dictionary: [AnyHashable: Any]) {
@@ -25,6 +26,7 @@ class Message: NSObject {
         self.text = dictionary["text"] as! String
         self.timestamp = dictionary["timestamp"] as? Timestamp ?? Timestamp(date: Date())
         self.imageUrl = dictionary["imageUrl"] as? String
+  //      self.isGroupMessage = dictionary["isGroupMessage"]
     }
     
     var dictionary: [String: Any] {
@@ -35,6 +37,7 @@ class Message: NSObject {
             "text": text,
             "timestamp": timestamp!,
             "imageUrl": imageUrl
+            
         ]
     }
 }

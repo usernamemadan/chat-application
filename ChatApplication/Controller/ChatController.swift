@@ -9,31 +9,43 @@ import UIKit
 import FirebaseFirestore
 import FirebaseAuth
 
+
+//protocol sendMessageDelegate: AnyObject{
+//    override var inputAccesoryView
+//}
+
 class ChatController: UITableViewController, UINavigationControllerDelegate  {
 
     fileprivate let messageCellIdentifier = "id1"
     fileprivate let imageCellIdentifier = "id2"
     var user: User?
     var messages: [Message] = []
+    var pickedImage: UIImage?
     
     var imagePickerController = UIImagePickerController()
     var messageTextField = CustomTextField(placeholder: "Type the message here..")
     
-    
-    lazy var sendMessageContainerView: SendMessageContainerView = {
+    lazy var sendButton: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "arrowtriangle.forward.fill")!
         let tapOnImage = UITapGestureRecognizer(target: self, action: #selector(HandleSendMessage))
         imageView.addGestureRecognizer(tapOnImage)
         imageView.isUserInteractionEnabled = true
-        
+        return imageView
+    }()
+    
+    lazy var selectPhotoButton: UIImageView = {
         let photoButton = UIImageView()
         photoButton.image = UIImage(systemName: "photo.fill")
+    //    photoButton.
         let tapOnPhoto = UITapGestureRecognizer(target: self, action: #selector(pickPhoto))
         photoButton.addGestureRecognizer(tapOnPhoto)
         photoButton.isUserInteractionEnabled = true
-        
-        return SendMessageContainerView(imageview: imageView, photoButton: photoButton, textField: messageTextField)
+        return photoButton
+    }()
+    
+    lazy var sendMessageContainerView: SendMessageContainerView = {
+        return SendMessageContainerView(imageview: sendButton, photoButton: selectPhotoButton, textField: messageTextField)
     }()
     
     override func viewDidLoad() {
@@ -56,7 +68,7 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
 
     override var inputAccessoryView: UIView? {
          get {
-             sendMessageContainerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 100)
+             sendMessageContainerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
              return sendMessageContainerView
          }
      }
@@ -77,17 +89,42 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
         let text = messageTextField.text!
         let toId = user!.uid
         let msgId = getMessageId()
-
+     
+        if pickedImage == nil && text == "" {
+            return
+        }
+        
         let values = [ "msgId": msgId, "fromId": uid, "toId": toId, "text": text,"timestamp": Date()] as [String : Any]
         let message = Message(dictionary: values)
-        DatabaseManager.shared.addMessage(with: message)
-        DatabaseManager.shared.addRecentMessage(with: message)
+        
+        if pickedImage != nil {
+            guard let imageData = pickedImage?.pngData() else { return }
+           
+            NetworkManager.shared.uploadChatImage(imageData: imageData) {
+                guard let urlString = UserDefaults.standard.value(forKey: "url") as? String else { return }
+                message.imageUrl = urlString
+                DatabaseManager.shared.addMessage(with: message)
+                DatabaseManager.shared.addRecentMessage(with: message)
+                self.pickedImage = nil
+            }
+        }
+        else{
+            DatabaseManager.shared.addMessage(with: message)
+            DatabaseManager.shared.addRecentMessage(with: message)
+        }
+       
+        selectPhotoButton.image = UIImage(systemName: "photo.fill")
         messageTextField.text = ""
     }
+    
     
     // MARK: - Helper functions
     func getMessageId() -> String {
         guard let uid = Auth.auth().currentUser?.uid else { return "" }
+        if user?.isGroup == true {
+            return user!.uid
+        }
+            
         let toId = user!.uid
         return uid > toId ? uid+toId : toId+uid
     }
@@ -96,11 +133,13 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
         tableView.register(MessageCell.self, forCellReuseIdentifier: messageCellIdentifier)
         tableView.register(ImageCell.self, forCellReuseIdentifier: imageCellIdentifier)
         tableView.separatorStyle = .none
-        tableView.isUserInteractionEnabled = false
+        tableView.isUserInteractionEnabled = true
         tableView.keyboardDismissMode = .interactive
         tableView.alwaysBounceVertical = true
        
     }
+    
+    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
        return messages.count
@@ -124,23 +163,28 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
 }
 
 //MARK: - UIImagePickerControllerDelegate
+
 extension ChatController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true, completion: nil)
         guard let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
-        guard let imageData = image.pngData() else { return }
+   
+        pickedImage = image
+        selectPhotoButton.image = pickedImage
+   //     pickedImage = image
+   //     sendMessageContainerView.
+   //     sendImage(image: image)
+//        let imageVC = ImageViewController()
+//        imageVC.imageView.image = image
+//        imageVC.inputAccessoryView : UIView? {
+//            get {
+//                sendMessageContainerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 100)
+//                return sendMessageContainerView
+//            }
+//        }
+//        navigationController?.pushViewController(imageVC, animated: true)
+//        print("after image vc presenting")
         
-        NetworkManager.shared.uploadChatImage(imageData: imageData) {
-            guard let uid = Auth.auth().currentUser?.uid else { return }
-            let text = "image"
-            let toId = self.user!.uid
-            let msgId = self.getMessageId()
-            guard let urlString = UserDefaults.standard.value(forKey: "url") as? String else { return }
-
-            let values = [ "msgId": msgId, "fromId": uid, "toId": toId, "text": text,"timestamp": Date(), "imageUrl": urlString] as [String : Any]
-            let message = Message(dictionary: values)
-            DatabaseManager.shared.addMessage(with: message)
-        }
 
     }
 

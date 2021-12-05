@@ -36,14 +36,14 @@ class ImageCell: UITableViewCell {
         return label
     }()
     
-    var chatMessage: Message! {
+    var chatMessage: Message? {
         didSet {
             guard let uid = Auth.auth().currentUser?.uid else { return }
             let isIncoming = uid != chatMessage?.fromId
             bubbleBackgroundView.backgroundColor = isIncoming ? .systemTeal : .darkGray
             messageLabel.textColor = isIncoming ? .black : .systemTeal
             
-            //   messageLabel.text = chatMessage.text
+            messageLabel.text = chatMessage?.text
             
             if isIncoming {
                 trailingConstraint.isActive = false
@@ -62,8 +62,8 @@ class ImageCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-   //     backgroundColor = .clear
+        selectionStyle = .none
+        backgroundColor = .clear
         configureImageView()
     }
     

@@ -8,7 +8,7 @@
 import UIKit
 import FirebaseAuth
 
-protocol AuthenticationDelegate: class {
+protocol AuthenticationDelegate: AnyObject {
     func authenticationDidComplete()
 }
 
@@ -20,6 +20,7 @@ class LoginViewController: UIViewController {
     var passwordTextField = CustomTextField(placeholder: "Password")
     var dontHaveAnAccountTextField = UITextField()
     let loginButton = CustomButton(buttonText: "Login")
+    var forgotPasswordButton = UIButton()
     let signupButton = CustomButton(buttonText: "Signup")
     
     lazy var emailContainerView: CustomContainerView = {
@@ -52,7 +53,8 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .white
         configureUI()
         configureLoginButton()
-        configureTextField()
+        configureForgotPasswordTextField()
+        configureDontHaveAccTextField()
         configureSignupButton()
         configureDelegates()
     }
@@ -79,6 +81,16 @@ class LoginViewController: UIViewController {
         presentRegisterScreen()
     }
     
+    @objc func handleForgotPassword(){
+        Auth.auth().sendPasswordReset(withEmail: emailTextField.text!) { error in
+            if let error = error {
+                self.showAlert(error: error.localizedDescription)
+                return
+            }
+            self.showAlert(error: "A password reset link has been sent to email")
+        }
+    }
+    
     // MARK: - helper functions
     func configureDelegates(){
         emailTextField.delegate = self
@@ -93,6 +105,19 @@ class LoginViewController: UIViewController {
         loginButton.topAnchor.constraint(equalTo: passwordContainerView.bottomAnchor, constant: 25).isActive = true
         
         loginButton.addTarget(self, action: #selector(loginButtonPressed), for: UIControl.Event.touchUpInside)
+        
+    }
+    
+    func configureForgotPasswordTextField(){
+        forgotPasswordButton.setTitle("Forgot password? click here", for: .normal)
+        forgotPasswordButton.setTitleColor(.black, for: .normal)
+    //    forgotPasswordButton.backgroundColor = .black
+        forgotPasswordButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(forgotPasswordButton)
+        forgotPasswordButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 15).isActive = true
+        forgotPasswordButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        forgotPasswordButton.addTarget(self, action: #selector(handleForgotPassword), for: .touchUpInside)
     }
     
     func configureSignupButton(){
@@ -100,16 +125,16 @@ class LoginViewController: UIViewController {
         signupButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         signupButton.widthAnchor.constraint(equalToConstant: 150).isActive = true
         signupButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        signupButton.topAnchor.constraint(equalTo: dontHaveAnAccountTextField.bottomAnchor, constant: 25).isActive = true
+        signupButton.topAnchor.constraint(equalTo: dontHaveAnAccountTextField.bottomAnchor, constant: 15).isActive = true
         
         signupButton.addTarget(self, action: #selector(signupButtonPressed), for: UIControl.Event.touchUpInside)
     }
     
-    func configureTextField(){
+    func configureDontHaveAccTextField(){
         dontHaveAnAccountTextField.text = "Don't have an account?"
         dontHaveAnAccountTextField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(dontHaveAnAccountTextField)
-        dontHaveAnAccountTextField.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 200).isActive = true
+        dontHaveAnAccountTextField.topAnchor.constraint(equalTo: forgotPasswordButton.bottomAnchor, constant: 100).isActive = true
         dontHaveAnAccountTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
     }
