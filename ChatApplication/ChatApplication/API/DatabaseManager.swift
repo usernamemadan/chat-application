@@ -21,16 +21,14 @@ struct DatabaseManager {
     
     func addMessage(with message: Message) {
         db.collection("messages").addDocument(data: message.dictionary)
-    }
-    
-    func addRecentMessage(with message: Message){
         db.collection("recent-messages").document(message.msgId).setData(message.dictionary)
     }
     
-    func getMessages(messageId: String, completion:@escaping([Message]) -> Void){
+    func getMessages(messageId: String, completion: @escaping([Message]) -> Void) {
         var messages: [Message] = []
         db.collection("messages").whereField("msgId", isEqualTo: messageId).order(by: "timestamp").addSnapshotListener { snapshot, error in
             if error != nil{
+                //use guard
                 print(error!.localizedDescription)
                 return
             }
@@ -38,19 +36,25 @@ struct DatabaseManager {
             
             snapshot.documentChanges.forEach { change in
                 
-                if change.type == .added{
+                if change.type == .added {
                    
                     let documentData = change.document.data()
                     let message = Message(dictionary: documentData)
-                    messages.append(message)
-                    guard let imageUrl = message.imageUrl else {
-                        return completion(messages)
-                    }
-
-                    NetworkManager.shared.downloadImage(fromURL: imageUrl) { image in
-                        if image != nil{
-                            message.image = image
+                    DatabaseManager.shared.fetchUser(uid: message.fromId) { user in
+                        message.sender = user
+                        
+                        guard let imageUrl = message.imageUrl else {
+                            messages.append(message)
                             completion(messages)
+                            return
+                        }
+                        
+                        NetworkManager.shared.downloadImage(fromURL: imageUrl) { image in
+                            if image != nil {
+                                message.image = image
+                                messages.append(message)
+                                completion(messages)
+                            }
                         }
                     }
                 }
@@ -58,12 +62,10 @@ struct DatabaseManager {
         }
     }
     
-    func getRecentMessages(completion:@escaping([Message]) -> Void){
+    func getRecentMessages(completion: @escaping([Message]) -> Void) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        listenerRef = db.collection("recent-messages").order(by: "timestamp", descending: true).addSnapshotListener {
-            
-            snapshot, error in
+        listenerRef = db.collection("recent-messages").order(by: "timestamp", descending: true).addSnapshotListener { snapshot, error in
             if error != nil{
                 print(error!.localizedDescription)
                 return
@@ -85,7 +87,7 @@ struct DatabaseManager {
     func fetchUser(withMessage message: Message, completion:@escaping(User) -> Void){
         guard let uid = Auth.auth().currentUser?.uid else { return }
         var otherUserId = ""
-   
+        
         if message.isGroupMessage{
             otherUserId = message.toId
         }
@@ -96,20 +98,17 @@ struct DatabaseManager {
             otherUserId = message.fromId
         }
 
-        
         db.collection("users").document(otherUserId).getDocument { snapshot, error in
             if error != nil{
                 print(error!.localizedDescription)
                 return
             }
             guard let snapshot = snapshot else { return }
-        
             guard let documentData = snapshot.data() else { return }
+            
             let user = User(dictionary: documentData)
             completion(user)
         }
-        
-        
     }
     
     
@@ -125,7 +124,6 @@ struct DatabaseManager {
         
             for document in snapshot.documents{
                 let documentData = document.data()
-                
                 let user = User(dictionary: documentData)
                 if !user.isGroup{
                     users.append(user)
@@ -136,15 +134,15 @@ struct DatabaseManager {
         }
     }
     
-    func fetchUser(uid: String, completion:@escaping(User) -> Void){
+    func fetchUser(uid: String, completion: @escaping(User) -> Void){
         db.collection("users").document(uid).getDocument { snapshot, error in
-            if error != nil{
+            if error != nil {
                 print(error!.localizedDescription)
                 return
             }
             guard let snapshot = snapshot else { return }
-        
             guard let documentData = snapshot.data() else { return }
+            
             let user = User(dictionary: documentData)
             completion(user)
         }

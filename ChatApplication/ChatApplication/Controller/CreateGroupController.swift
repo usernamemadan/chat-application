@@ -44,12 +44,8 @@ class CreateGroupController: UIViewController {
         view.addSubview(profileImage)
         
         profileImage.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        profileImage.topAnchor.constraint(equalTo: view.topAnchor, constant: 200).isActive = true
+        profileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100).isActive = true
         
-//        profileImage.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 100).isActive = true
-//        profileImage.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -100).isActive = true
-//        profileImage.topAnchor.constraint(equalTo: view.topAnchor, constant: -100).isActive = true
-//        profileImage.heightAnchor.constraint(equalToConstant: 200).isActive = true
     }
 
     func configureGroupNameField(){
@@ -58,7 +54,7 @@ class CreateGroupController: UIViewController {
         groupNameContainerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         groupNameContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
         groupNameContainerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10).isActive = true
-        groupNameContainerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 400).isActive = true
+        groupNameContainerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 200).isActive = true
     }
 
     func configureCreateGroupButton(){
@@ -84,12 +80,17 @@ class CreateGroupController: UIViewController {
 extension CreateGroupController: createGroupDelegate{
     func createGroup(uniqueId: String) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        guard let imageData = self.profileImage.image?.pngData() else { return }
-        NetworkManager.shared.uploadImage(imageData: imageData) {
-            guard let urlString = UserDefaults.standard.value(forKey: "url") as? String else { return }
-            //   guard let uid = Auth.auth().currentUser?.uid else { return }
+        guard let image = profileImage.image  else { return }
+        
+        NetworkManager.shared.uploadImage(image: image, path: "Profile Images") { url in
+            let values = ["uid": UUID().uuidString + uid + uniqueId,
+                          "first_name": self.groupNameTextField.text!,
+                          "last_name": "",
+                          "email": "",
+                          "profile_image_url": url,
+                          "timestamp": Date(),
+                          "isGroup": true] as [String : Any]
             
-            let values = ["uid": UUID().uuidString + uid + uniqueId, "first_name": self.groupNameTextField.text!, "last_name": "", "email": "", "profile_image_url": urlString, "timestamp": Date(), "isGroup": true] as [String : Any]
             let user = User(dictionary: values)
             DatabaseManager.shared.insertUser(with: user)
             
@@ -101,7 +102,6 @@ extension CreateGroupController: createGroupDelegate{
             vcArray!.removeLast()
             vcArray!.append(chatVC)
             self.navigationController?.setViewControllers(vcArray!, animated: false)
-            
             
         }
     }

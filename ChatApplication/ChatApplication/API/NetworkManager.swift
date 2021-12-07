@@ -13,7 +13,6 @@ import FirebaseStorage
 struct NetworkManager {
     static let shared = NetworkManager()
     
-    let urlString = ""
     var uid: String? {
         get {
            return Auth.auth().currentUser?.uid
@@ -28,35 +27,36 @@ struct NetworkManager {
         Auth.auth().createUser(withEmail: email, password: password, completion: completion)
     }
     
-    func uploadImage(imageData: Data, completion:@escaping(() -> Void)) {
+    func uploadImage(image: UIImage, path: String, completion: @escaping (String) -> Void) {
+        guard let imageData = image.pngData() else { return }
         let uuid = NSUUID().uuidString
-        Storage.storage().reference().child("Profile Images").child(uuid).putData(imageData, metadata: nil) { _, error in
+            
+        Storage.storage().reference().child(path).child(uuid).putData(imageData, metadata: nil) { _, error in
             guard error == nil else { return }
-            Storage.storage().reference().child("Profile Images").child(uuid).downloadURL { url, error in
+            
+            Storage.storage().reference().child(path).child(uuid).downloadURL { url, error in
                 guard let url = url, error == nil else { return }
                 let urlString = url.absoluteString
-                UserDefaults.standard.set(urlString, forKey: "url")
-                DispatchQueue.main.async {
-                    completion()
-                }
+                completion(urlString)
             }
         }
     }
     
-    func uploadChatImage(imageData: Data, completion:@escaping(() -> Void)) {
-        let uuid = NSUUID().uuidString
-        Storage.storage().reference().child("Chat Images").child(uuid).putData(imageData, metadata: nil) { _, error in
-            guard error == nil else { return }
-            Storage.storage().reference().child("Chat Images").child(uuid).downloadURL { url, error in
-                guard let url = url, error == nil else { return }
-                let urlString = url.absoluteString
-                UserDefaults.standard.set(urlString, forKey: "url")
-                DispatchQueue.main.async {
-                    completion()
-                }
-            }
-        }
-    }
+//    func uploadChatImage(imageData: Data, completion:@escaping(() -> Void)) {
+//        let uuid = NSUUID().uuidString
+//        Storage.storage().reference().child("Chat Images").child(uuid).putData(imageData, metadata: nil) { _, error in
+//            guard error == nil else { return }
+//
+//            Storage.storage().reference().child("Chat Images").child(uuid).downloadURL { url, error in
+//                guard let url = url, error == nil else { return }
+//                let urlString = url.absoluteString
+//                UserDefaults.standard.set(urlString, forKey: "url")
+//                DispatchQueue.main.async {
+//                    completion()
+//                }
+//            }
+//        }
+//    }
     
     func downloadImage(fromURL urlString: String, completion: @escaping(UIImage?) -> Void) {
         guard let url = URL(string: urlString) else { return }

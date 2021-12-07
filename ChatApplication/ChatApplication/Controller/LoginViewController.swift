@@ -65,7 +65,6 @@ class LoginViewController: UIViewController {
         
     }
     
-//    handleOrientationChange
     //MARK: - actions
     @objc func loginButtonPressed(){
         guard let email = emailTextField.text, let password = passwordTextField.text else { return }
@@ -90,6 +89,10 @@ class LoginViewController: UIViewController {
     
     @objc func handleForgotPassword(){
        presentForgotPasswordScreen()
+    }
+    
+    @objc func handleOrientationChange() {
+        scrollView.contentSize = CGSize(width: view.frame.width, height: 700)
     }
     
     // MARK: - helper functions
@@ -196,9 +199,6 @@ class LoginViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleOrientationChange), name: UIDevice.orientationDidChangeNotification, object: nil)
     }
     
-    @objc func handleOrientationChange() {
-        scrollView.contentSize = CGSize(width: view.frame.width, height: 700)
-    }
 }
 
 //MARK: - UITextfieldDelegate

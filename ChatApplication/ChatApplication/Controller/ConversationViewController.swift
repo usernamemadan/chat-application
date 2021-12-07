@@ -8,8 +8,6 @@
 import UIKit
 import FirebaseAuth
 
-
-
 class ConversationViewController: UIViewController {
 
     // MARK: - properties
@@ -23,23 +21,19 @@ class ConversationViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "ChatApp"
+        self.title = "Chatapp"
         view.backgroundColor = .white
-  //      logout()
         isLoggedIn()
     }
  
-    
     override func viewDidAppear(_ animated: Bool) {
         DatabaseManager.shared.getRecentMessages { recentMessages in
             self.recentMessages = recentMessages
-
             DispatchQueue.main.async {
                 self.collecionView.reloadData()
             }
         }
     }
-    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -71,6 +65,11 @@ class ConversationViewController: UIViewController {
         DispatchQueue.main.async {
             self.viewDidLoad()
         }
+    }
+    
+    @objc func createGroup(){
+        let vc = CreateGroupController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     // MARK: - helper functions
@@ -129,10 +128,6 @@ class ConversationViewController: UIViewController {
         }
     }
     
-    @objc func createGroup(){
-        let vc = CreateGroupController()
-        navigationController?.pushViewController(vc, animated: true)
-    }
     
     func setup(user: User, message: Message, indexPath: IndexPath){
         let cell = self.collecionView.cellForItem(at: indexPath) as! ConversationCell
@@ -190,6 +185,7 @@ extension ConversationViewController: AuthenticationDelegate{
 
 
 extension ConversationViewController: UICollectionViewDataSource{
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return recentMessages.count
     }
@@ -211,6 +207,7 @@ extension ConversationViewController: UICollectionViewDataSource{
             cell.profilePadding = 5
             cell.checkBox.isHidden = true
         }
+        
         return cell
     }
     
@@ -225,10 +222,10 @@ extension ConversationViewController: UICollectionViewDataSource{
 
 
 extension ConversationViewController: UICollectionViewDelegateFlowLayout{
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 80)
-    }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.bounds.width, height: 80)
+    }
 }
 
 

@@ -7,8 +7,6 @@
 
 import UIKit
 
-
-
 class ImageViewController: UIViewController {
 
     let imageView = UIImageView()

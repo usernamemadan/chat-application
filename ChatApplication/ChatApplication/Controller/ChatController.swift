@@ -10,11 +10,8 @@ import FirebaseFirestore
 import FirebaseAuth
 
 
-
 class ChatController: UITableViewController, UINavigationControllerDelegate  {
 
-    fileprivate let messageCellIdentifier = "id1"
-    fileprivate let imageCellIdentifier = "id2"
     var user: User?
     var messages: [Message] = []
     var pickedImage: UIImage?
@@ -24,6 +21,7 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
     
     lazy var sendButton: UIImageView = {
         let imageView = UIImageView()
+        imageView.contentMode = .scaleToFill
         imageView.image = UIImage(systemName: "arrowtriangle.forward.fill")!
         let tapOnImage = UITapGestureRecognizer(target: self, action: #selector(HandleSendMessage))
         imageView.addGestureRecognizer(tapOnImage)
@@ -34,7 +32,6 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
     lazy var selectPhotoButton: UIImageView = {
         let photoButton = UIImageView()
         photoButton.image = UIImage(systemName: "photo.fill")
-    //    photoButton.
         let tapOnPhoto = UITapGestureRecognizer(target: self, action: #selector(pickPhoto))
         photoButton.addGestureRecognizer(tapOnPhoto)
         photoButton.isUserInteractionEnabled = true
@@ -44,6 +41,19 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
     lazy var sendMessageContainerView: SendMessageContainerView = {
         return SendMessageContainerView(imageview: sendButton, photoButton: selectPhotoButton, textField: messageTextField)
     }()
+    
+    override var inputAccessoryView: UIView? {
+         get {
+             sendMessageContainerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 60)
+             return sendMessageContainerView
+         }
+     }
+    
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,16 +73,6 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
         }
     }
 
-    override var inputAccessoryView: UIView? {
-         get {
-             sendMessageContainerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
-             return sendMessageContainerView
-         }
-     }
-
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
     
     // MARK: - Actions
     @objc func pickPhoto(){
@@ -96,19 +96,16 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
         let message = Message(dictionary: values)
         
         if pickedImage != nil {
-            guard let imageData = pickedImage?.pngData() else { return }
+            guard let image = pickedImage else { return }
            
-            NetworkManager.shared.uploadChatImage(imageData: imageData) {
-                guard let urlString = UserDefaults.standard.value(forKey: "url") as? String else { return }
-                message.imageUrl = urlString
+            NetworkManager.shared.uploadImage(image: image, path: "Chat Images") { url in
+                message.imageUrl = url
                 DatabaseManager.shared.addMessage(with: message)
-                DatabaseManager.shared.addRecentMessage(with: message)
                 self.pickedImage = nil
             }
         }
         else{
             DatabaseManager.shared.addMessage(with: message)
-            DatabaseManager.shared.addRecentMessage(with: message)
         }
        
         selectPhotoButton.image = UIImage(systemName: "photo.fill")
@@ -126,10 +123,15 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
         let toId = user!.uid
         return uid > toId ? uid+toId : toId+uid
     }
+    
+    func configureNavigationBar(){
+        navigationItem.title = user?.firstName
+        navigationController?.navigationBar.prefersLargeTitles = true
+    }
         
     func configureTableView(){
-        tableView.register(MessageCell.self, forCellReuseIdentifier: messageCellIdentifier)
-        tableView.register(ImageCell.self, forCellReuseIdentifier: imageCellIdentifier)
+        tableView.register(MessageCell.self, forCellReuseIdentifier: MessageCell.messageCellIdentifier)
+        tableView.register(ImageCell.self, forCellReuseIdentifier: ImageCell.imageCellIdentifier)
         tableView.separatorStyle = .none
         tableView.isUserInteractionEnabled = true
         tableView.keyboardDismissMode = .interactive
@@ -142,21 +144,21 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         if messages[indexPath.row].imageUrl == nil{
-            let cell = tableView.dequeueReusableCell(withIdentifier: messageCellIdentifier, for: indexPath) as! MessageCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: MessageCell.messageCellIdentifier, for: indexPath) as! MessageCell
             cell.chatMessage = messages[indexPath.row]
+            
             return cell
         }
         else{
-            let cell = tableView.dequeueReusableCell(withIdentifier: imageCellIdentifier, for: indexPath) as! ImageCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: ImageCell.imageCellIdentifier, for: indexPath) as! ImageCell
             cell.chatMessage = messages[indexPath.row]
-            DispatchQueue.main.async {
-                cell.chatImageView.image = self.messages[indexPath.row].image
-            }
+            cell.chatImageView.image = self.messages[indexPath.row].image
+            
             return cell
         }
     }
-
 }
 
 
@@ -166,7 +168,6 @@ extension ChatController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true, completion: nil)
         guard let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
-   
         pickedImage = image
         selectPhotoButton.image = pickedImage
     }

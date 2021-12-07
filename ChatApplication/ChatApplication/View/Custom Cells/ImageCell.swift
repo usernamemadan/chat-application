@@ -9,6 +9,9 @@ import UIKit
 import FirebaseAuth
 
 class ImageCell: UITableViewCell {
+    
+    static let imageCellIdentifier = "ImageCell"
+    
     var leadingConstraint: NSLayoutConstraint!
     var trailingConstraint: NSLayoutConstraint!
     var leadingConstraintImage: NSLayoutConstraint!
@@ -20,6 +23,15 @@ class ImageCell: UITableViewCell {
         view.layer.cornerRadius = 12
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
+    }()
+    
+    let fromLabel: UILabel = {
+        var label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
+        label.font = .boldSystemFont(ofSize: 16)
+        label.textColor = .systemPurple
+        return label
     }()
     
     var chatImageView : UIImageView  = {
@@ -51,11 +63,15 @@ class ImageCell: UITableViewCell {
                 leadingConstraint.isActive = true
                 leadingConstraintImage.isActive = true
                 
+                fromLabel.text = chatMessage?.sender?.firstName
+                
             } else {
                 leadingConstraint.isActive = false
                 leadingConstraintImage.isActive = false
                 trailingConstraint.isActive = true
                 trailingConstraintImage.isActive = true
+                
+                fromLabel.text = ""
             }
         }
     }
@@ -73,22 +89,29 @@ class ImageCell: UITableViewCell {
     
     func configureImageView(){
         addSubview(bubbleBackgroundView)
+        addSubview(fromLabel)
         addSubview(chatImageView)
         addSubview(messageLabel)
         
         let imageViewConstraints = [
-            chatImageView.topAnchor.constraint(equalTo: topAnchor, constant: 32),
-            chatImageView.bottomAnchor.constraint(equalTo: messageLabel.topAnchor, constant: 0),
+            
+            fromLabel.topAnchor.constraint(equalTo: topAnchor, constant: 32),
+            fromLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 250),
+            fromLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 50),
+            fromLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 32),
+            
+            chatImageView.topAnchor.constraint(equalTo: fromLabel.bottomAnchor),
+            chatImageView.bottomAnchor.constraint(equalTo: messageLabel.topAnchor),
             chatImageView.widthAnchor.constraint(equalToConstant: 200),
             chatImageView.heightAnchor.constraint(equalToConstant: 200),
             
             messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
             messageLabel.widthAnchor.constraint(equalToConstant: 200),
             
-            bubbleBackgroundView.topAnchor.constraint(equalTo: chatImageView.topAnchor, constant: -16),
-            bubbleBackgroundView.leadingAnchor.constraint(equalTo: chatImageView.leadingAnchor, constant: -16),
-            bubbleBackgroundView.bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 16),
-            bubbleBackgroundView.trailingAnchor.constraint(equalTo: chatImageView.trailingAnchor, constant: 16),
+            bubbleBackgroundView.topAnchor.constraint(equalTo: fromLabel.topAnchor, constant: -10),
+            bubbleBackgroundView.leadingAnchor.constraint(equalTo: chatImageView.leadingAnchor, constant: -10),
+            bubbleBackgroundView.bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 10),
+            bubbleBackgroundView.trailingAnchor.constraint(equalTo: chatImageView.trailingAnchor, constant: 10),
         ]
         
         NSLayoutConstraint.activate(imageViewConstraints)

@@ -9,10 +9,10 @@ import UIKit
 
 class UserInfoCell: UICollectionViewCell {
     
-    
     static let reuseIdentifier = "userCell"
     
     let profileImageView: UIImageView = {
+        //imageview
         let iv = UIImageView()
         iv.backgroundColor = .white
         iv.contentMode = .scaleAspectFill
@@ -26,8 +26,8 @@ class UserInfoCell: UICollectionViewCell {
     let nameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.text = "full name"
-      //  label.lineBreakMode = .byTruncatingTail
+   //     label.text = "full name"
+        label.lineBreakMode = .byTruncatingTail
         label.font = UIFont.boldSystemFont(ofSize: 26)
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -59,7 +59,6 @@ class UserInfoCell: UICollectionViewCell {
         profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CGFloat(profilePadding)).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
-        
         
         nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
         nameLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 10).isActive = true

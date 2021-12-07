@@ -10,6 +10,8 @@ import FirebaseAuth
 
 class MessageCell: UITableViewCell {
     
+    static let messageCellIdentifier = "messageCell"
+    
     let messageLabel: UILabel = {
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -19,7 +21,6 @@ class MessageCell: UITableViewCell {
     
     let fromLabel: UILabel = {
         var label = UILabel()
-        label.text = "   "
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 1
         label.font = .boldSystemFont(ofSize: 16)
@@ -29,7 +30,6 @@ class MessageCell: UITableViewCell {
     
     let bubbleBackgroundView: UIView = {
         var view = UIView()
-        view.backgroundColor = .systemYellow
         view.layer.cornerRadius = 12
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -37,16 +37,7 @@ class MessageCell: UITableViewCell {
     
     var leadingConstraint: NSLayoutConstraint!
     var trailingConstraint: NSLayoutConstraint!
-    
-    
-    var chatImageView : UIImageView  = {
-        var imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.clipsToBounds = true
-        return imageView
-    }()
-    
-    
+        
     var chatMessage: Message? {
         didSet {
             guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -59,30 +50,21 @@ class MessageCell: UITableViewCell {
             if isIncoming {
                 trailingConstraint.isActive = false
                 leadingConstraint.isActive = true
-                DatabaseManager.shared.fetchUser(uid: chatMessage!.fromId) { user in
-                    DispatchQueue.main.async {
-                        self.fromLabel.text = user.firstName
-                    }
+                if chatMessage?.isGroupMessage == true{
+                    fromLabel.text = chatMessage?.sender?.firstName
                 }
             }
             else {
                 leadingConstraint.isActive = false
                 trailingConstraint.isActive = true
-                
-                DispatchQueue.main.async {
-                    self.fromLabel.text = ""
-                }
+                fromLabel.text = ""
             }
         }
     }
     
-
-    
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
-        backgroundColor = .clear
         configureMessageCell()
     }
     
@@ -100,24 +82,24 @@ class MessageCell: UITableViewCell {
             
             fromLabel.topAnchor.constraint(equalTo: topAnchor, constant: 32),
             fromLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 250),
+            fromLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 50),
             fromLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 32),
             
-            messageLabel.topAnchor.constraint(equalTo: fromLabel.bottomAnchor, constant: 0),
+            messageLabel.topAnchor.constraint(equalTo: fromLabel.bottomAnchor),
             messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
             messageLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 250),
+            messageLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 50),
             
-            bubbleBackgroundView.topAnchor.constraint(equalTo: fromLabel.topAnchor, constant: -16),
-            bubbleBackgroundView.leadingAnchor.constraint(equalTo: messageLabel.leadingAnchor, constant: -16),
-            bubbleBackgroundView.bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 16),
-            bubbleBackgroundView.trailingAnchor.constraint(equalTo: messageLabel.trailingAnchor, constant: 16),
+            bubbleBackgroundView.topAnchor.constraint(equalTo: fromLabel.topAnchor, constant: -10),
+            bubbleBackgroundView.leadingAnchor.constraint(equalTo: messageLabel.leadingAnchor, constant: -10),
+            bubbleBackgroundView.bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 10),
+            bubbleBackgroundView.trailingAnchor.constraint(equalTo: messageLabel.trailingAnchor, constant: 10),
         ]
+        
         NSLayoutConstraint.activate(constraints)
         
         leadingConstraint = messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 32)
-        leadingConstraint.isActive = false
-        
         trailingConstraint = messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -32)
-        trailingConstraint.isActive = true
         
     }
 }

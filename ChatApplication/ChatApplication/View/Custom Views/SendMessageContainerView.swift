@@ -13,17 +13,16 @@ class SendMessageContainerView: UIView {
       //  super.init(frame: .zero)
         tintColor = .black
     
-   //     heightAnchor.constraint(equalToConstant: 50).isActive = true
         layer.borderColor = UIColor.black.cgColor
         layer.borderWidth = 1
         layer.cornerRadius = 5
-        backgroundColor = .white
+        backgroundColor = UIColor(red: 255/255.0, green: 235/255.0, blue: 205/255.0, alpha: 1)
         translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(imageview)
         
         imageview.translatesAutoresizingMaskIntoConstraints = false
-        imageview.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        imageview.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -5).isActive = true
         imageview.rightAnchor.constraint(equalTo: rightAnchor, constant: -15) .isActive = true
         imageview.widthAnchor.constraint(equalToConstant: 40).isActive = true
         imageview.heightAnchor.constraint(equalToConstant: 40).isActive = true
@@ -33,13 +32,13 @@ class SendMessageContainerView: UIView {
         photoButton.translatesAutoresizingMaskIntoConstraints = false
         photoButton.rightAnchor.constraint(equalTo: imageview.leftAnchor, constant: -15).isActive = true
         photoButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        photoButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        photoButton.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -5).isActive = true
         photoButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
         addSubview(textField)
         
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        textField.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -5).isActive = true
         textField.leftAnchor.constraint(equalTo: leftAnchor,constant: 10).isActive = true
         textField.rightAnchor.constraint(equalTo: photoButton.leftAnchor, constant: -10).isActive = true
         textField.heightAnchor.constraint(equalToConstant: 40).isActive = true

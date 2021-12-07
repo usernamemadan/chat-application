@@ -8,7 +8,7 @@
 import Foundation
 import Firebase
 
-
+// parameter as optionals
 class Message: NSObject {
     var msgId: String
     var fromId: String
@@ -18,6 +18,7 @@ class Message: NSObject {
     var imageUrl: String?
     var isGroupMessage: Bool
     var image: UIImage?
+    var sender: User?
     
     init(dictionary: [AnyHashable: Any]) {
         self.msgId = dictionary["msgId"] as! String

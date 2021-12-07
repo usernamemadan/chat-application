@@ -193,30 +193,34 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate{
         NetworkManager.shared.SignUserIn(withEmail: email, password: password) { result, error in
             if error != nil {
                 print( error!.localizedDescription)
+                return
             }
-            else {
-                guard let imageData = self.profileImage.image?.pngData() else { return }
-                NetworkManager.shared.uploadImage(imageData: imageData) {
-                    guard let urlString = UserDefaults.standard.value(forKey: "url") as? String else { return }
-                    guard let uid = Auth.auth().currentUser?.uid else { return }
-                    
-                    let values = ["uid": uid, "first_name": firstName, "last_name": lastName, "email": email, "profile_image_url": urlString, "timestamp": Date(), "isGroup": false] as [String : Any]
-                    let user = User(dictionary: values)
-                    DatabaseManager.shared.insertUser(with: user)
-                    self.delegate?.authenticationDidComplete()
-                    self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
-                }
-            }
+            
+            guard let image = self.profileImage.image else { return}
+            
+            NetworkManager.shared.uploadImage(image: image, path: "Profile Images", completion: { url in
+                guard let uid = Auth.auth().currentUser?.uid else { return }
+                
+                let values = ["uid": uid, "first_name": firstName, "last_name": lastName, "email": email, "profile_image_url": url, "timestamp": Date(), "isGroup": false] as [String : Any]
+                let user = User(dictionary: values)
+                DatabaseManager.shared.insertUser(with: user)
+                self.delegate?.authenticationDidComplete()
+                self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+            })
+
         }
     }
     
     func isInputValid() -> Bool {
         guard let email = emailTextField.text, let password = passwordTextField.text else { return false}
+        
         guard email.isValidEmail(), password.isValidPassword() else {
             showErrorAlert(error: "Please enter valid email and password")
             return false
         }
+        
         guard let firstName = firstNameTextField.text, let lastName = lastNameTextField.text else { return false }
+        
         guard firstName != "", lastName != "" else {
             showErrorAlert(error: "First name and last name connot be empty")
             return false
