@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 class CustomContainerView: UIView {
+  
     init(image: UIImage, textField: UITextField) {
         super.init(frame: .zero)
         tintColor = .black
@@ -33,6 +34,7 @@ class CustomContainerView: UIView {
         textField.leftAnchor.constraint(equalTo: iv.rightAnchor,constant: 10).isActive = true
         textField.rightAnchor.constraint(equalTo: rightAnchor, constant: -10).isActive = true
         textField.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
     }
     
     required init?(coder: NSCoder) {

@@ -17,12 +17,22 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
     var pickedImage: UIImage?
     
     var imagePickerController = UIImagePickerController()
-    var messageTextField = CustomTextField(placeholder: "Type the message here..")
+    lazy var messageTextField: UITextField = {
+        let textField = UITextField()
+        textField.textColor = .white
+        textField.backgroundColor = .clear
+        textField.layer.cornerRadius = 20
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "Message",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.white]
+        )
+        return textField
+    }()
     
     lazy var sendButton: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
-        imageView.image = UIImage(systemName: "arrowtriangle.forward.fill")!
+        imageView.image = UIImage(named: "sendButton-1.png")!
         let tapOnImage = UITapGestureRecognizer(target: self, action: #selector(HandleSendMessage))
         imageView.addGestureRecognizer(tapOnImage)
         imageView.isUserInteractionEnabled = true
@@ -32,6 +42,7 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
     lazy var selectPhotoButton: UIImageView = {
         let photoButton = UIImageView()
         photoButton.image = UIImage(systemName: "photo.fill")
+        photoButton.tintColor = UIColor.colors.WALightGray2
         let tapOnPhoto = UITapGestureRecognizer(target: self, action: #selector(pickPhoto))
         photoButton.addGestureRecognizer(tapOnPhoto)
         photoButton.isUserInteractionEnabled = true
@@ -44,23 +55,19 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
     
     override var inputAccessoryView: UIView? {
          get {
-             sendMessageContainerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 60)
+             sendMessageContainerView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 65)
              return sendMessageContainerView
          }
      }
-    
     
     override var canBecomeFirstResponder: Bool {
         return true
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        navigationItem.title = user?.firstName
-        navigationController?.navigationBar.prefersLargeTitles = true
         
+        configureNavigationBar()
         configureTableView()
 
         DatabaseManager.shared.getMessages(messageId: getMessageId()) { messages in
@@ -136,7 +143,8 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
         tableView.isUserInteractionEnabled = true
         tableView.keyboardDismissMode = .interactive
         tableView.alwaysBounceVertical = true
-       
+        tableView.backgroundView = UIImageView(image: UIImage(named: "wallpaper.png"))
+        tableView.backgroundView?.contentMode = .scaleToFill
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

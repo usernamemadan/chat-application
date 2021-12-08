@@ -30,7 +30,7 @@ class ImageCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 1
         label.font = .boldSystemFont(ofSize: 16)
-        label.textColor = .systemPurple
+        label.textColor = .systemYellow
         return label
     }()
     
@@ -43,6 +43,7 @@ class ImageCell: UITableViewCell {
     
     let messageLabel: UILabel = {
         var label = UILabel()
+        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         return label
@@ -51,10 +52,9 @@ class ImageCell: UITableViewCell {
     var chatMessage: Message? {
         didSet {
             guard let uid = Auth.auth().currentUser?.uid else { return }
-            let isIncoming = uid != chatMessage?.fromId
-            bubbleBackgroundView.backgroundColor = isIncoming ? .systemTeal : .darkGray
-            messageLabel.textColor = isIncoming ? .black : .systemTeal
             
+            let isIncoming = uid != chatMessage?.fromId
+            bubbleBackgroundView.backgroundColor = isIncoming ? .colors.WAGrayLight : .colors.WAGreen
             messageLabel.text = chatMessage?.text
             
             if isIncoming {
@@ -108,10 +108,10 @@ class ImageCell: UITableViewCell {
             messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
             messageLabel.widthAnchor.constraint(equalToConstant: 200),
             
-            bubbleBackgroundView.topAnchor.constraint(equalTo: fromLabel.topAnchor, constant: -10),
-            bubbleBackgroundView.leadingAnchor.constraint(equalTo: chatImageView.leadingAnchor, constant: -10),
-            bubbleBackgroundView.bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 10),
-            bubbleBackgroundView.trailingAnchor.constraint(equalTo: chatImageView.trailingAnchor, constant: 10),
+            bubbleBackgroundView.topAnchor.constraint(equalTo: fromLabel.topAnchor, constant: -6),
+            bubbleBackgroundView.leadingAnchor.constraint(equalTo: chatImageView.leadingAnchor, constant: -6),
+            bubbleBackgroundView.bottomAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 6),
+            bubbleBackgroundView.trailingAnchor.constraint(equalTo: chatImageView.trailingAnchor, constant: 6),
         ]
         
         NSLayoutConstraint.activate(imageViewConstraints)

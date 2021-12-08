@@ -32,7 +32,7 @@ class ForgotPasswordViewController: UIViewController {
         
         emailContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 15).isActive = true
         emailContainerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -15).isActive = true
-        emailContainerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 250).isActive = true
+        emailContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50).isActive = true
         emailContainerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
     
@@ -41,7 +41,7 @@ class ForgotPasswordViewController: UIViewController {
         
         proceedButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
         proceedButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        proceedButton.topAnchor.constraint(equalTo: emailContainerView.bottomAnchor, constant: 50).isActive = true
+        proceedButton.topAnchor.constraint(equalTo: emailContainerView.bottomAnchor, constant: 25).isActive = true
         proceedButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         proceedButton.addTarget(self, action: #selector(resetPassword), for: .touchUpInside)
@@ -62,7 +62,7 @@ class ForgotPasswordViewController: UIViewController {
         
         backButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
         backButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        backButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -200).isActive = true
+        backButton.topAnchor.constraint(equalTo: proceedButton.bottomAnchor, constant: 50).isActive = true
         backButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         backButton.addTarget(self, action: #selector(showLoginScreen), for: .touchUpInside)

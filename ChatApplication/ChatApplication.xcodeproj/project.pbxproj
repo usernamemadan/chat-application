@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		9424602E275CFFFC0033694C /* CreateGroupController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9424602D275CFFFC0033694C /* CreateGroupController.swift */; };
+		942AF9FF27609E4F00F35E5E /* PTSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 942AF9FA27609E4F00F35E5E /* PTSans-Italic.ttf */; };
+		942AFA0027609E4F00F35E5E /* PTSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 942AF9FB27609E4F00F35E5E /* PTSans-BoldItalic.ttf */; };
+		942AFA0127609E4F00F35E5E /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 942AF9FC27609E4F00F35E5E /* OFL.txt */; };
+		942AFA0227609E4F00F35E5E /* PTSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 942AF9FD27609E4F00F35E5E /* PTSans-Regular.ttf */; };
+		942AFA0327609E4F00F35E5E /* PTSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 942AF9FE27609E4F00F35E5E /* PTSans-Bold.ttf */; };
+		942AFA052761265600F35E5E /* ColorExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942AFA042761265600F35E5E /* ColorExtention.swift */; };
 		942FEB2F27566CF90016D504 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 942FEB2E27566CF90016D504 /* Assets.xcassets */; };
 		942FEB3227566CF90016D504 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 942FEB3027566CF90016D504 /* LaunchScreen.storyboard */; };
 		942FEB3E27566F720016D504 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB3C27566F720016D504 /* AppDelegate.swift */; };
@@ -44,6 +50,12 @@
 		7DA8B4A55FAA0F9D7B21E93D /* Pods-ChatApplication.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatApplication.debug.xcconfig"; path = "Target Support Files/Pods-ChatApplication/Pods-ChatApplication.debug.xcconfig"; sourceTree = "<group>"; };
 		91097FAC9CD681AFB371A277 /* Pods_ChatApplication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatApplication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9424602D275CFFFC0033694C /* CreateGroupController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupController.swift; sourceTree = "<group>"; };
+		942AF9FA27609E4F00F35E5E /* PTSans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PTSans-Italic.ttf"; sourceTree = "<group>"; };
+		942AF9FB27609E4F00F35E5E /* PTSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PTSans-BoldItalic.ttf"; sourceTree = "<group>"; };
+		942AF9FC27609E4F00F35E5E /* OFL.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
+		942AF9FD27609E4F00F35E5E /* PTSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PTSans-Regular.ttf"; sourceTree = "<group>"; };
+		942AF9FE27609E4F00F35E5E /* PTSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PTSans-Bold.ttf"; sourceTree = "<group>"; };
+		942AFA042761265600F35E5E /* ColorExtention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtention.swift; sourceTree = "<group>"; };
 		942FEB2227566CF60016D504 /* ChatApplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatApplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		942FEB2E27566CF90016D504 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		942FEB3127566CF90016D504 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -97,6 +109,26 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		942AF9F827609E3000F35E5E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				942AF9F927609E4F00F35E5E /* PT_Sans */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		942AF9F927609E4F00F35E5E /* PT_Sans */ = {
+			isa = PBXGroup;
+			children = (
+				942AF9FA27609E4F00F35E5E /* PTSans-Italic.ttf */,
+				942AF9FB27609E4F00F35E5E /* PTSans-BoldItalic.ttf */,
+				942AF9FC27609E4F00F35E5E /* OFL.txt */,
+				942AF9FD27609E4F00F35E5E /* PTSans-Regular.ttf */,
+				942AF9FE27609E4F00F35E5E /* PTSans-Bold.ttf */,
+			);
+			path = PT_Sans;
+			sourceTree = "<group>";
+		};
 		942FEB1927566CF60016D504 = {
 			isa = PBXGroup;
 			children = (
@@ -118,6 +150,7 @@
 		942FEB2427566CF60016D504 /* ChatApplication */ = {
 			isa = PBXGroup;
 			children = (
+				942AF9F827609E3000F35E5E /* Resources */,
 				942FEB7227567E650016D504 /* View */,
 				942FEB59275670300016D504 /* Utils */,
 				942FEB54275670250016D504 /* Model */,
@@ -180,6 +213,7 @@
 				942FEB5A275670300016D504 /* Constants.swift */,
 				942FEB5B275670300016D504 /* Extension.swift */,
 				949040C9275DFD20005DA07B /* AppUtility.swift */,
+				942AFA042761265600F35E5E /* ColorExtention.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -300,9 +334,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				942AFA0127609E4F00F35E5E /* OFL.txt in Resources */,
 				942FEB3227566CF90016D504 /* LaunchScreen.storyboard in Resources */,
+				942AFA0327609E4F00F35E5E /* PTSans-Bold.ttf in Resources */,
+				942AFA0027609E4F00F35E5E /* PTSans-BoldItalic.ttf in Resources */,
+				942AF9FF27609E4F00F35E5E /* PTSans-Italic.ttf in Resources */,
 				94B06E132758C14D0051AD52 /* GoogleService-Info.plist in Resources */,
 				942FEB2F27566CF90016D504 /* Assets.xcassets in Resources */,
+				942AFA0227609E4F00F35E5E /* PTSans-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,6 +403,7 @@
 				942FEB52275670130016D504 /* NetworkManager.swift in Sources */,
 				942FEB65275670510016D504 /* CustomTextField.swift in Sources */,
 				942FEB5C275670300016D504 /* Constants.swift in Sources */,
+				942AFA052761265600F35E5E /* ColorExtention.swift in Sources */,
 				942FEB6B2756705C0016D504 /* UserInfoCell.swift in Sources */,
 				949040CC275E1F00005DA07B /* ForgotPasswordViewController.swift in Sources */,
 				94B06E15275938790051AD52 /* ImageCell.swift in Sources */,

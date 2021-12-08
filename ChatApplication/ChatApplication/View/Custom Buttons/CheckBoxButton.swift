@@ -8,7 +8,7 @@
 import UIKit
 
 class CheckBox: UIButton {
-    // Images
+   
     let checkedImage = UIImage(systemName: "checkmark.circle.fill")
     let uncheckedImage = UIImage(systemName: "circle")
     
@@ -24,6 +24,7 @@ class CheckBox: UIButton {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        tintColor = .colors.WALightGreen
         self.addTarget(self, action:#selector(buttonClicked(sender:)), for: UIControl.Event.touchUpInside)
         self.isChecked = false
         self.setImage(uncheckedImage, for: UIControl.State.normal)

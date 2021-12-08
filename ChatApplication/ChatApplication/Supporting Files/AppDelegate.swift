@@ -16,6 +16,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    override init() {
+        super.init()
+        UIFont.overrideInitialize()
+    }
+    
+    
     var orientationLock = UIInterfaceOrientationMask.all
 
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {

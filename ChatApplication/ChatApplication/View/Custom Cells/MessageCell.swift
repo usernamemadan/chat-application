@@ -14,6 +14,7 @@ class MessageCell: UITableViewCell {
     
     let messageLabel: UILabel = {
         var label = UILabel()
+        label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         return label
@@ -24,7 +25,7 @@ class MessageCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 1
         label.font = .boldSystemFont(ofSize: 16)
-        label.textColor = .systemPurple
+        label.textColor = .systemYellow
         return label
     }()
     
@@ -43,8 +44,7 @@ class MessageCell: UITableViewCell {
             guard let uid = Auth.auth().currentUser?.uid else { return }
             let isIncoming = uid != chatMessage?.fromId
             
-            bubbleBackgroundView.backgroundColor = isIncoming ? .systemTeal : .darkGray
-            messageLabel.textColor = isIncoming ? .black : .white
+            bubbleBackgroundView.backgroundColor = isIncoming ? UIColor.colors.WAGrayLight : UIColor.colors.WAGreen
             messageLabel.text = chatMessage?.text
             
             if isIncoming {
@@ -65,6 +65,7 @@ class MessageCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
+        backgroundColor = .clear
         configureMessageCell()
     }
     

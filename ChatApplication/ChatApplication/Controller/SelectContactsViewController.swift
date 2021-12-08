@@ -24,7 +24,8 @@ class SelectContactsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
+        navigationController?.navigationBar.prefersLargeTitles = false
+        
         configureSearchbar()
         configureUICollectionView()
         
@@ -56,7 +57,7 @@ class SelectContactsViewController: UIViewController {
         collectionView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
-        collectionView.backgroundColor = .darkGray
+        collectionView.backgroundColor = .colors.WAGray
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(UserInfoCell.self, forCellWithReuseIdentifier: UserInfoCell.reuseIdentifier)
@@ -65,9 +66,7 @@ class SelectContactsViewController: UIViewController {
     func configureSearchbar(){
         searchbar.searchBarStyle = UISearchBar.Style.default
         searchbar.placeholder = " Search..."
-        searchbar.sizeToFit()
         searchbar.isTranslucent = false
-        searchbar.backgroundImage = UIImage()
         searchbar.delegate = self
         searchbar.translatesAutoresizingMaskIntoConstraints = false
         
@@ -110,9 +109,7 @@ extension SelectContactsViewController: UICollectionViewDataSource{
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserInfoCell.reuseIdentifier, for: indexPath) as! UserInfoCell
-
         cell.setup(user: users[indexPath.row])
-        cell.backgroundColor = .darkGray
         
         if showCheckBox{
             cell.profilePadding = 55

@@ -22,7 +22,7 @@ class ConversationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Chatapp"
-        view.backgroundColor = .white
+    
         isLoggedIn()
     }
  
@@ -37,6 +37,7 @@ class ConversationViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
         AppUtility.lockOrientation(.portrait)
     }
 
@@ -59,14 +60,7 @@ class ConversationViewController: UIViewController {
         VC.modalPresentationStyle = .fullScreen
         navigationController?.pushViewController(VC, animated: true)
     }
-    
-    @objc func editTapped(){
-        showCheckBox = !showCheckBox
-        DispatchQueue.main.async {
-            self.viewDidLoad()
-        }
-    }
-    
+        
     @objc func createGroup(){
         let vc = CreateGroupController()
         navigationController?.pushViewController(vc, animated: true)
@@ -84,27 +78,26 @@ class ConversationViewController: UIViewController {
     func configureNavigationBar() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .darkGray
-        let attributes = [NSAttributedString.Key.font: UIFont(name: "Helvetica Neue", size: 38)!]
+        appearance.backgroundColor = UIColor.colors.WAGrayLight
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        appearance.largeTitleTextAttributes = attributes
-        
-        navigationController?.navigationBar.prefersLargeTitles = true
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+    
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.compactAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.tintColor = UIColor.colors.WALightGray2
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(logout))
         let add = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(selectContactTapped))
-        let edit = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editTapped))
         let addGroup = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(createGroup))
-        navigationItem.rightBarButtonItems = [edit, add, addGroup]
+        navigationItem.rightBarButtonItems = [add, addGroup]
     }
     
     func configureUICollectionView(){
         collecionView = UICollectionView(frame: view.bounds, collectionViewLayout: UICollectionViewFlowLayout())
         view.addSubview(collecionView)
-        collecionView.backgroundColor = .darkGray
+      //  collecionView.backgroundColor = .darkGray
+        collecionView.backgroundColor = UIColor.colors.WAGray
         collecionView.delegate = self
         collecionView.dataSource = self
         collecionView.register(ConversationCell.self, forCellWithReuseIdentifier: ConversationCell.reuseIdentifier)
@@ -192,7 +185,7 @@ extension ConversationViewController: UICollectionViewDataSource{
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collecionView.dequeueReusableCell(withReuseIdentifier: ConversationCell.reuseIdentifier, for: indexPath) as! ConversationCell
-        cell.backgroundColor = .darkGray
+      //  cell.backgroundColor = .darkGray
         cell.delegate = self
         
         DatabaseManager.shared.fetchUser(withMessage: recentMessages[indexPath.row]) { user in
@@ -214,6 +207,7 @@ extension ConversationViewController: UICollectionViewDataSource{
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         DatabaseManager.shared.fetchUser(withMessage: recentMessages[indexPath.row]) { user in
             let vc = ChatController()
+        
             vc.user = user
             self.navigationController?.pushViewController(vc, animated: true)
         }

@@ -75,8 +75,6 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate{
     
     //MARK: - actions
     @objc func addImage(){
-    
-        print("preseting picker")
         self.imagePickerController.allowsEditing = true
         self.present(self.imagePickerController, animated:  true, completion:  nil)
     }

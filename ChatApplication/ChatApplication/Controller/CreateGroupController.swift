@@ -8,17 +8,21 @@
 import UIKit
 import FirebaseAuth
 
-class CreateGroupController: UIViewController {
+class CreateGroupController: UIViewController, UINavigationControllerDelegate {
 
-    let profileImage: UIImageView = {
+    var imagePickerController = UIImagePickerController()
+    
+    lazy var profileImage: UIImageView = {
         let image = UIImageView()
-        image.clipsToBounds = true
-        image.image =  UIImage(systemName: "person.fill.viewfinder")
-        image.tintColor = .black
-        image.contentMode = .scaleToFill
+        image.image =  UIImage(systemName: "person.crop.circle")
+        image.tintColor = .darkGray
         image.translatesAutoresizingMaskIntoConstraints = false
         image.heightAnchor.constraint(equalToConstant: 150).isActive = true
         image.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(addImage))
+        image.addGestureRecognizer(tap)
+        image.isUserInteractionEnabled = true
 
         return image
     }()
@@ -29,22 +33,40 @@ class CreateGroupController: UIViewController {
        return CustomContainerView(image: UIImage(systemName: "square.and.pencil")!, textField: groupNameTextField)
     }()
     
-    let signupButton = CustomButton(buttonText: "Create Group")
+    let createGroupButton = CustomButton(buttonText: "Create Group")
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .colors.WALightGray2
+        navigationController?.navigationBar.prefersLargeTitles = false
 
         configureGroupImage()
         configureGroupNameField()
         configureCreateGroupButton()
+        
+    }
+    
+    @objc func addImage(){
+        imagePickerController.delegate = self
+        self.imagePickerController.allowsEditing = true
+        self.present(self.imagePickerController, animated:  true, completion:  nil)
+    }
+    
+    @objc func selectContacts(){
+        guard let groupName = self.groupNameTextField.text, !groupName.isEmpty else { return }
+        
+        let VC = SelectContactsViewController()
+        VC.showCheckBox = true
+        VC.delgate = self
+        navigationController?.pushViewController(VC, animated: true)
     }
     
     func configureGroupImage(){
         view.addSubview(profileImage)
         
         profileImage.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        profileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100).isActive = true
+        profileImage.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 25).isActive = true
+    
         
     }
 
@@ -54,26 +76,22 @@ class CreateGroupController: UIViewController {
         groupNameContainerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         groupNameContainerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10).isActive = true
         groupNameContainerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10).isActive = true
-        groupNameContainerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 200).isActive = true
+        groupNameContainerView.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 25).isActive = true
     }
 
     func configureCreateGroupButton(){
-        view.addSubview(signupButton)
+        view.addSubview(createGroupButton)
         
-        signupButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
-        signupButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        signupButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 500).isActive = true
-        signupButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        createGroupButton.backgroundColor = .colors.WAGrayLight
+        createGroupButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        createGroupButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        createGroupButton.topAnchor.constraint(equalTo: groupNameContainerView.bottomAnchor, constant: 50).isActive = true
+        createGroupButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
-        signupButton.addTarget(self, action: #selector(selectContacts), for: .touchUpInside)
+        createGroupButton.addTarget(self, action: #selector(selectContacts), for: .touchUpInside)
     }
     
-    @objc func selectContacts(){
-        let VC = SelectContactsViewController()
-        VC.showCheckBox = true
-        VC.delgate = self
-        navigationController?.pushViewController(VC, animated: true)
-    }
+   
     
 }
     
@@ -81,10 +99,11 @@ extension CreateGroupController: createGroupDelegate{
     func createGroup(uniqueId: String) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         guard let image = profileImage.image  else { return }
+        guard let groupName = self.groupNameTextField.text, !groupName.isEmpty else { return }
         
         NetworkManager.shared.uploadImage(image: image, path: "Profile Images") { url in
             let values = ["uid": UUID().uuidString + uid + uniqueId,
-                          "first_name": self.groupNameTextField.text!,
+                          "first_name": groupName,
                           "last_name": "",
                           "email": "",
                           "profile_image_url": url,
@@ -105,6 +124,18 @@ extension CreateGroupController: createGroupDelegate{
             
         }
     }
-    
+}
+
+//MARK: - UIImagePickerControllerDelegate
+extension CreateGroupController: UIImagePickerControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true, completion: nil)
+        guard let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
+        profileImage.image = image
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true,completion: nil)
+    }
     
 }
