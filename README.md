@@ -1,1 +1,1 @@
-# chatApplication - yml
+# ChatApplication - yml
