@@ -44,7 +44,7 @@ class MessageCell: UITableViewCell {
             guard let uid = Auth.auth().currentUser?.uid else { return }
             let isIncoming = uid != chatMessage?.fromId
             
-            bubbleBackgroundView.backgroundColor = isIncoming ? UIColor.colors.WAGrayLight : UIColor.colors.WAGreen
+            bubbleBackgroundView.backgroundColor = isIncoming ? UIColor.colors.WALightGray : UIColor.colors.WAGreen
             messageLabel.text = chatMessage?.text
             
             if isIncoming {

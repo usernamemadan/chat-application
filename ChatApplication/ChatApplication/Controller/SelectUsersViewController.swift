@@ -11,10 +11,10 @@ import FirebaseStorage
 import FirebaseFirestore
 
 protocol createGroupDelegate: AnyObject{
-    func createGroup(uniqueId: String)
+    func createGroup(usersId: String, selectedUsers: [User])
 }
 
-class SelectContactsViewController: UIViewController {
+class SelectUsersViewController: UIViewController {
     var users: [User] = []
     var tempUsers: [User] = []
     var collectionView: UICollectionView!
@@ -33,7 +33,19 @@ class SelectContactsViewController: UIViewController {
             configureNavigationBarButton()
         }
         
-        DatabaseManager.shared.fetchUsers { users in
+        getData()
+        
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        guard let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
+        flowLayout.invalidateLayout()
+    }
+    
+    func getData() {
+        DatabaseManager.shared.getAllUsers { users in
             self.users = users
             self.tempUsers = users
             DispatchQueue.main.async {
@@ -42,12 +54,11 @@ class SelectContactsViewController: UIViewController {
         }
     }
     
-    
-    func configureNavigationBarButton(){
+    func configureNavigationBarButton() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(contactsSelected))
     }
     
-    func configureUICollectionView(){
+    func configureUICollectionView() {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout() )
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
@@ -63,12 +74,13 @@ class SelectContactsViewController: UIViewController {
         collectionView.register(UserInfoCell.self, forCellWithReuseIdentifier: UserInfoCell.reuseIdentifier)
     }
     
-    func configureSearchbar(){
+    func configureSearchbar() {
         searchbar.searchBarStyle = UISearchBar.Style.default
         searchbar.placeholder = " Search..."
         searchbar.isTranslucent = false
         searchbar.delegate = self
         searchbar.translatesAutoresizingMaskIntoConstraints = false
+        searchbar.backgroundColor = .black
         
         view.addSubview(searchbar)
         searchbar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
@@ -78,31 +90,31 @@ class SelectContactsViewController: UIViewController {
 
     }
     
-    func getSelectedContacts() -> String{
-        var uniqueId = ""
+    func getSelectedContacts() -> (String, [User]) {
+        var usersId = ""
+        var selectedUsers: [User] = []
         for row in 0..<collectionView.numberOfItems(inSection: 0){
             let indexPath = NSIndexPath(row:row, section:0)
             let cell = collectionView.cellForItem(at: indexPath as IndexPath) as! UserInfoCell
             
             if cell.checkBox.isChecked == true {
-                print(users[indexPath.row].firstName)
-                uniqueId += users[indexPath.row].uid
+                let user = users[indexPath.row]
+                selectedUsers.append(user)
+                usersId += user.uid
             }
         }
-        return uniqueId
+        return (usersId, selectedUsers)
     }
     
     
-    @objc func contactsSelected(){
-        let uniqueId = getSelectedContacts()
-        delgate?.createGroup(uniqueId: uniqueId)
+    @objc func contactsSelected() {
+        let (usersId, selectedUsers) = getSelectedContacts()
+        delgate?.createGroup(usersId: usersId, selectedUsers: selectedUsers)
     }
-    
-
-    
+ 
 }
 
-extension SelectContactsViewController: UICollectionViewDataSource{
+extension SelectUsersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return users.count
     }
@@ -112,11 +124,11 @@ extension SelectContactsViewController: UICollectionViewDataSource{
         cell.setup(user: users[indexPath.row])
         
         if showCheckBox{
-            cell.profilePadding = 55
+            cell.profileImagePadding = 55
             cell.checkBox.isHidden = false
         }
         else{
-            cell.profilePadding = 5
+            cell.profileImagePadding = 5
             cell.checkBox.isHidden = true
         }
         
@@ -136,7 +148,7 @@ extension SelectContactsViewController: UICollectionViewDataSource{
     }
 }
 
-extension SelectContactsViewController: UICollectionViewDelegateFlowLayout{
+extension SelectUsersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: view.frame.width, height: 80)
     }
@@ -150,7 +162,7 @@ extension SelectContactsViewController: UICollectionViewDelegateFlowLayout{
     }
 }
 
-extension SelectContactsViewController: UISearchBarDelegate{
+extension SelectUsersViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         users = []
         if searchText == "" {

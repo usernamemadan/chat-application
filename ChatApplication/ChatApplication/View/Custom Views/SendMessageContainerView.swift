@@ -11,7 +11,7 @@ class SendMessageContainerView: UIView {
     
     let bubbleBackgroundView: UIView = {
         var view = UIView()
-        view.backgroundColor = .colors.WAGrayLight
+        view.backgroundColor = .colors.WALightGray
         view.layer.cornerRadius = 25
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -21,7 +21,6 @@ class SendMessageContainerView: UIView {
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 65))
 
         tintColor = .colors.WAGreen
-    
         layer.cornerRadius = 25
         backgroundColor = .clear
         translatesAutoresizingMaskIntoConstraints = false

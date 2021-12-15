@@ -54,7 +54,7 @@ class ImageCell: UITableViewCell {
             guard let uid = Auth.auth().currentUser?.uid else { return }
             
             let isIncoming = uid != chatMessage?.fromId
-            bubbleBackgroundView.backgroundColor = isIncoming ? .colors.WAGrayLight : .colors.WAGreen
+            bubbleBackgroundView.backgroundColor = isIncoming ? .colors.WALightGray : .colors.WAGreen
             messageLabel.text = chatMessage?.text
             
             if isIncoming {
@@ -62,8 +62,9 @@ class ImageCell: UITableViewCell {
                 trailingConstraintImage.isActive = false
                 leadingConstraint.isActive = true
                 leadingConstraintImage.isActive = true
-                
-                fromLabel.text = chatMessage?.sender?.firstName
+                if chatMessage?.isGroupMessage == true{
+                    fromLabel.text = chatMessage?.sender?.firstName
+                }
                 
             } else {
                 leadingConstraint.isActive = false

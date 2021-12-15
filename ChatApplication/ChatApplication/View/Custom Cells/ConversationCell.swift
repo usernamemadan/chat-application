@@ -16,23 +16,23 @@ class ConversationCell: UICollectionViewCell {
     weak var delegate: presentImageDelegate?
     
     let profileImageView: UIImageView = {
-        let iv = UIImageView()
-        iv.backgroundColor = .white
-        iv.contentMode = .scaleAspectFill
-        iv.clipsToBounds = true
-        iv.layer.borderWidth = 3
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.layer.borderColor = UIColor.white.cgColor
-        iv.image = UIImage(systemName: "person.fill")
-        return iv
+        let imageView = UIImageView()
+        imageView.backgroundColor = .white
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.borderWidth = 3
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.image = UIImage(systemName: "person.fill")
+        imageView.layer.cornerRadius = 35
+        return imageView
     }()
     
     let nameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-    //    label.text = "full name"
-      //  label.lineBreakMode = .byTruncatingTail
-        label.font = UIFont.boldSystemFont(ofSize: 26)
+        label.lineBreakMode = .byTruncatingTail
+        label.font = UIFont.boldSystemFont(ofSize: 21)
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -40,9 +40,9 @@ class ConversationCell: UICollectionViewCell {
     
     let messageLabel: UILabel = {
         let label = UILabel()
+        label.text = ""
         label.textAlignment = .center
-     //   label.text = "this is the sample message"
-        label.font = UIFont.systemFont(ofSize: 15)
+        label.font = UIFont.systemFont(ofSize: 14.54)
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -50,9 +50,9 @@ class ConversationCell: UICollectionViewCell {
     
     let timeLabel: UILabel = {
         let label = UILabel()
+        label.text = ""
         label.textAlignment = .center
-        label.text = "9:30"
-        label.font = UIFont.systemFont(ofSize: 15)
+        label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -69,7 +69,6 @@ class ConversationCell: UICollectionViewCell {
         contentView.addSubview(nameLabel)
         contentView.addSubview(messageLabel)
         contentView.addSubview(timeLabel)
-        profileImageView.layer.cornerRadius = 35
         contentView.clipsToBounds = true
         configureCheckBox()
     }
@@ -98,16 +97,20 @@ class ConversationCell: UICollectionViewCell {
         profileImageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         
+        
         let tap = UITapGestureRecognizer(target: self, action: #selector(selectImage))
         profileImageView.addGestureRecognizer(tap)
         profileImageView.isUserInteractionEnabled = true
+        
         
         nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
         nameLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 10).isActive = true
         nameLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -50).isActive = true
         
+        
         messageLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 5).isActive = true
         messageLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 10).isActive = true
+        
         
         timeLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
         timeLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -5).isActive = true
@@ -120,21 +123,3 @@ class ConversationCell: UICollectionViewCell {
     
 }
 
-
-
-
-//    func setup(user: User, message: Message, indexPath: IndexPath){
-//        nameLabel.text = user.firstName + user.lastName
-//        messageLabel.text = message.text
-//        let profileImageUrl = user.profileImageUrl
-//         NetworkManager.shared.downloadImage(fromURL: profileImageUrl) { image in
-//             if image != nil {
-//                 DispatchQueue.main.async {
-//                     self.profileImageView.image = image
-//                 }
-//             }
-//         }
-//        let date = message.timestamp.dateValue()
-//        let time = Date().days(from: date) > 0 ? date.getFormattedDate(format: "MM/dd/yyyy") : date.getFormattedDate(format: "HH:mm")
-//        timeLabel.text = time
-//    }

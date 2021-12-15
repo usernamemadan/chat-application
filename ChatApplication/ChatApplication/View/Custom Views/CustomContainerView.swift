@@ -12,7 +12,7 @@ class CustomContainerView: UIView {
   
     init(image: UIImage, textField: UITextField) {
         super.init(frame: .zero)
-        tintColor = .black
+        tintColor = .white
         heightAnchor.constraint(equalToConstant: 50).isActive = true
         layer.borderColor = UIColor.black.cgColor
         layer.borderWidth = 1

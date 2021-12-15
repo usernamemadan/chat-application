@@ -19,50 +19,54 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate{
     var firstNameTextField = CustomTextField(placeholder: "First Name")
     var lastNameTextField = CustomTextField(placeholder: "Second Name")
     var alreadyHaveAnAcc = UITextField()
+    
+    let signupButton = CustomButton(buttonText: "Signup")
+    let loginButton = CustomButton(buttonText: "Login")
+    
     var imagePickerController = UIImagePickerController()
     let storage = Storage.storage().reference()
     
     lazy var emailContainerView: CustomContainerView = {
-       return CustomContainerView(image: UIImage(systemName: "envelope.fill")!, textField: emailTextField)
+        return CustomContainerView(image: UIImage(systemName: "envelope.fill")!, textField: emailTextField)
         
     }()
     
     lazy var passwordContainerView: CustomContainerView = {
         passwordTextField.isSecureTextEntry = true
-       return CustomContainerView(image: UIImage(systemName: "eye.fill")!, textField: passwordTextField)
+        return CustomContainerView(image: UIImage(systemName: "eye.fill")!, textField: passwordTextField)
     }()
     
     lazy var firstNameContainerView: CustomContainerView = {
-       return CustomContainerView(image: UIImage(systemName: "square.and.pencil")!, textField: firstNameTextField)
+        firstNameTextField.textColor = .white
+        return CustomContainerView(image: UIImage(systemName: "square.and.pencil")!, textField: firstNameTextField)
     }()
     
     lazy var lastNameContainerView: CustomContainerView = {
-       return CustomContainerView(image: UIImage(systemName: "square.and.pencil")!, textField: lastNameTextField)
+        lastNameTextField.textColor = .white
+        return CustomContainerView(image: UIImage(systemName: "square.and.pencil")!, textField: lastNameTextField)
     }()
-        
-    let signupButton = CustomButton(buttonText: "Signup")
-    let loginButton = CustomButton(buttonText: "Login")
+    
     
     let scrollView = UIScrollView(frame: .zero)
     
     let profileImage: UIImageView = {
         let image = UIImageView()
         image.clipsToBounds = true
-        image.image =  UIImage(systemName: "person.fill.viewfinder")
-        image.tintColor = .black
+        image.image =  UIImage(systemName: "person.fill.badge.plus")
+        image.tintColor = .systemGray
         image.contentMode = .scaleToFill
         image.translatesAutoresizingMaskIntoConstraints = false
         image.heightAnchor.constraint(equalToConstant: 150).isActive = true
         image.widthAnchor.constraint(equalToConstant: 150).isActive = true
-
+        
         return image
     }()
-
+    
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .colors.WALightGray
         configureScrollView()
         configureUI()
         configureSignupButton()
@@ -70,17 +74,19 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate{
         configureLoginButton()
         configureNotificationObserver()
         configureDelegates()
-        imagePickerController.delegate = self
+        
     }
     
     //MARK: - actions
     @objc func addImage(){
+        imagePickerController.delegate = self
         self.imagePickerController.allowsEditing = true
         self.present(self.imagePickerController, animated:  true, completion:  nil)
     }
     
     @objc func signupButtonPressed(){
-       signup()
+        signupButton.pulse()
+        signup()
     }
     
     @objc func loginButtonPressed(){
@@ -98,7 +104,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate{
             self.view.frame.origin.y = 0
         }
     }
-  
+    
     @objc func handleOrientationChange() {
         scrollView.contentSize = CGSize(width: view.frame.width, height: 700)
     }
@@ -168,6 +174,7 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate{
     
     func configureTextField(){
         alreadyHaveAnAcc.text = "Already have an account?"
+        alreadyHaveAnAcc.textColor = .white
         alreadyHaveAnAcc.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(alreadyHaveAnAcc)
         alreadyHaveAnAcc.topAnchor.constraint(equalTo: signupButton.bottomAnchor, constant: 50).isActive = true
@@ -181,13 +188,21 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate{
         firstNameTextField.delegate = self
         lastNameTextField.delegate = self
     }
- 
+    
     
     func signup(){
-        guard isInputValid() == true else { return }
         
-        guard let email = emailTextField.text, let password = passwordTextField.text, let firstName = firstNameTextField.text, let lastName = lastNameTextField.text else { return }
-                
+        guard let email = emailTextField.text,
+              let password = passwordTextField.text,
+              let firstName = firstNameTextField.text,
+              let lastName = lastNameTextField.text
+        else { return }
+        
+        guard isInputValid() == true else {
+            signupButton.shake()
+            return
+        }
+        
         NetworkManager.shared.SignUserIn(withEmail: email, password: password) { result, error in
             if error != nil {
                 print( error!.localizedDescription)
@@ -199,26 +214,30 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate{
             NetworkManager.shared.uploadImage(image: image, path: "Profile Images", completion: { url in
                 guard let uid = Auth.auth().currentUser?.uid else { return }
                 
-                let values = ["uid": uid, "first_name": firstName, "last_name": lastName, "email": email, "profile_image_url": url, "timestamp": Date(), "isGroup": false] as [String : Any]
+                let values = ["uid": uid,
+                              "first_name": firstName,
+                              "last_name": lastName,
+                              "email": email,
+                              "profile_image_url": url,
+                              "timestamp": Date(),
+                              "isGroup": false] as [String : Any]
                 let user = User(dictionary: values)
-                DatabaseManager.shared.insertUser(with: user)
+                DatabaseManager.shared.addUser(with: user)
                 self.delegate?.authenticationDidComplete()
                 self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
             })
-
+            
         }
     }
     
     func isInputValid() -> Bool {
         guard let email = emailTextField.text, let password = passwordTextField.text else { return false}
-        
         guard email.isValidEmail(), password.isValidPassword() else {
             showErrorAlert(error: "Please enter valid email and password")
             return false
         }
         
         guard let firstName = firstNameTextField.text, let lastName = lastNameTextField.text else { return false }
-        
         guard firstName != "", lastName != "" else {
             showErrorAlert(error: "First name and last name connot be empty")
             return false
@@ -227,7 +246,6 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate{
         return true
     }
     
-    
     func showErrorAlert(error: String) {
         let dialogMessage = UIAlertController(title: "error", message: error, preferredStyle: .alert)
         let ok = UIAlertAction(title: "OK", style: .default, handler: .none)
@@ -235,9 +253,8 @@ class RegisterViewController: UIViewController, UINavigationControllerDelegate{
         self.present(dialogMessage, animated: true, completion: nil)
     }
     
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
+        self.scrollView.endEditing(true)
     }
     
 }
@@ -257,7 +274,7 @@ extension RegisterViewController: UIImagePickerControllerDelegate {
         guard let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
         profileImage.image = image
     }
-
+    
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true,completion: nil)
     }

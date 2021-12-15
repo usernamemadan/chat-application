@@ -15,10 +15,9 @@ class CustomButton: UIButton {
         titleLabel?.font = UIFont.preferredFont(forTextStyle: .title1)
         self.setTitleColor(.white, for: .normal)
         self.setTitle(buttonText, for: .normal)
-        backgroundColor = .black
+        backgroundColor = .colors.WALightGreen
         layer.cornerRadius = 10
         translatesAutoresizingMaskIntoConstraints = false
-       // heightAnchor.constraint(equalToConstant: 70).isActive = true
     }
     
     required init?(coder: NSCoder) {

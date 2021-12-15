@@ -25,7 +25,6 @@ class LoginViewController: UIViewController {
     
     lazy var emailContainerView: CustomContainerView = {
        return CustomContainerView(image: UIImage(systemName: "envelope.fill")!, textField: emailTextField)
-        
     }()
     
     lazy var passwordContainerView: CustomContainerView = {
@@ -37,10 +36,9 @@ class LoginViewController: UIViewController {
         let image = UIImageView()
         image.clipsToBounds = true
         image.image =  UIImage(systemName: "message.circle")
-        image.tintColor = .black
+        image.tintColor = .systemGray
         image.contentMode = .scaleToFill
         image.translatesAutoresizingMaskIntoConstraints = false
-        
         image.heightAnchor.constraint(equalToConstant: 150).isActive = true
         image.widthAnchor.constraint(equalToConstant: 150).isActive = true
         
@@ -53,7 +51,7 @@ class LoginViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .colors.WALightGray
       
         configureScrollView()
         configureUI()
@@ -68,11 +66,15 @@ class LoginViewController: UIViewController {
     //MARK: - actions
     @objc func loginButtonPressed(){
         guard let email = emailTextField.text, let password = passwordTextField.text else { return }
+        guard !email.isEmpty, !password.isEmpty else {
+            loginButton.shake()
+            return
+        }
         guard email.isValidEmail(), password.isValidPassword() else {
             showAlert(error: "Please enter valid email and password")
             return
         }
-        
+        loginButton.flash()
         NetworkManager.shared.logUserIn(withEmail: email, password: password) { result, error in
             guard error == nil else {
                 self.showAlert(error: error!.localizedDescription)
@@ -84,6 +86,7 @@ class LoginViewController: UIViewController {
     }
     
     @objc func signupButtonPressed(){
+        signupButton.pulse()
         presentRegisterScreen()
     }
     
@@ -126,7 +129,7 @@ class LoginViewController: UIViewController {
     
     func configureForgotPasswordTextField(){
         forgotPasswordButton.setTitle("Forgot password? click here", for: .normal)
-        forgotPasswordButton.setTitleColor(.black, for: .normal)
+        forgotPasswordButton.setTitleColor(.white, for: .normal)
         forgotPasswordButton.translatesAutoresizingMaskIntoConstraints = false
         
         scrollView.addSubview(forgotPasswordButton)
@@ -147,6 +150,7 @@ class LoginViewController: UIViewController {
     
     func configureDontHaveAccTextField(){
         dontHaveAnAccountTextField.text = "Don't have an account?"
+        dontHaveAnAccountTextField.textColor = .white
         dontHaveAnAccountTextField.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(dontHaveAnAccountTextField)
         dontHaveAnAccountTextField.topAnchor.constraint(equalTo: forgotPasswordButton.bottomAnchor, constant: 100).isActive = true

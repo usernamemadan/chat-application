@@ -15,17 +15,34 @@ class ForgotPasswordViewController: UIViewController {
     lazy var emailContainerView: CustomContainerView = {
        return CustomContainerView(image: UIImage(systemName: "envelope.fill")!, textField: emailTextField)
     }()
+    
     let proceedButton = CustomButton(buttonText: "Proceed")
     let backButton = CustomButton(buttonText: "Back")
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .colors.WALightGray
         configureEmail()
         configureProceedButton()
         configureBackButton()
     }
 
+    @objc func resetPassword(){
+        Auth.auth().sendPasswordReset(withEmail: emailTextField.text!) { error in
+            if let error = error {
+                self.showAlert(error: error.localizedDescription)
+                return
+            }
+            self.showAlert(error: "A password reset link has been sent to email")
+        }
+    }
+    
+    @objc func showLoginScreen(){
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
     func configureEmail(){
         view.addSubview(emailContainerView)
         emailContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -47,15 +64,7 @@ class ForgotPasswordViewController: UIViewController {
         proceedButton.addTarget(self, action: #selector(resetPassword), for: .touchUpInside)
     }
     
-    @objc func resetPassword(){
-        Auth.auth().sendPasswordReset(withEmail: emailTextField.text!) { error in
-            if let error = error {
-                self.showAlert(error: error.localizedDescription)
-                return
-            }
-            self.showAlert(error: "A password reset link has been sent to email")
-        }
-    }
+
     
     func configureBackButton(){
         view.addSubview(backButton)
@@ -68,10 +77,7 @@ class ForgotPasswordViewController: UIViewController {
         backButton.addTarget(self, action: #selector(showLoginScreen), for: .touchUpInside)
     }
     
-    @objc func showLoginScreen(){
-        dismiss(animated: true, completion: nil)
-    }
-    
+ 
     func showAlert(error: String) {
         let dialogMessage = UIAlertController(title: "Alert", message: error, preferredStyle: .alert)
         let ok = UIAlertAction(title: "OK", style: .default, handler: .none)

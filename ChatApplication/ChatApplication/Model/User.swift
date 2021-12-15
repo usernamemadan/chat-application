@@ -17,6 +17,7 @@ class User: NSObject {
     var profileImageUrl: String
     var timestamp: Timestamp!
     var isGroup: Bool
+    var recentMessage: Message?
     
     init(dictionary: [AnyHashable: Any]) {
         self.uid = dictionary["uid"] as! String

@@ -23,13 +23,13 @@
 		942FEB4A27566FDC0016D504 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB4327566FDC0016D504 /* LoginViewController.swift */; };
 		942FEB4B27566FDC0016D504 /* ConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB4427566FDC0016D504 /* ConversationViewController.swift */; };
 		942FEB4D27566FDC0016D504 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB4627566FDC0016D504 /* RegisterViewController.swift */; };
-		942FEB4E27566FDC0016D504 /* SelectContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB4727566FDC0016D504 /* SelectContactsViewController.swift */; };
+		942FEB4E27566FDC0016D504 /* SelectUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB4727566FDC0016D504 /* SelectUsersViewController.swift */; };
 		942FEB52275670130016D504 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB50275670130016D504 /* NetworkManager.swift */; };
 		942FEB53275670130016D504 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB51275670130016D504 /* DatabaseManager.swift */; };
 		942FEB57275670250016D504 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB55275670250016D504 /* Message.swift */; };
 		942FEB58275670250016D504 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB56275670250016D504 /* User.swift */; };
 		942FEB5C275670300016D504 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB5A275670300016D504 /* Constants.swift */; };
-		942FEB5D275670300016D504 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB5B275670300016D504 /* Extension.swift */; };
+		942FEB5D275670300016D504 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB5B275670300016D504 /* StringExtension.swift */; };
 		942FEB61275670400016D504 /* CustomContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB5F2756703F0016D504 /* CustomContainerView.swift */; };
 		942FEB62275670400016D504 /* SendMessageContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB602756703F0016D504 /* SendMessageContainerView.swift */; };
 		942FEB65275670510016D504 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB64275670500016D504 /* CustomTextField.swift */; };
@@ -38,7 +38,9 @@
 		942FEB6C2756705C0016D504 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB692756705C0016D504 /* MessageCell.swift */; };
 		942FEB70275670680016D504 /* CheckBoxButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB6E275670680016D504 /* CheckBoxButton.swift */; };
 		942FEB71275670680016D504 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942FEB6F275670680016D504 /* CustomButton.swift */; };
-		949040CA275DFD20005DA07B /* AppUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949040C9275DFD20005DA07B /* AppUtility.swift */; };
+		9451368A2762661300BAC128 /* ButtonExtention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945136892762661300BAC128 /* ButtonExtention.swift */; };
+		9464FDEE2769E9D2007D1BB7 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9464FDED2769E9D2007D1BB7 /* DateExtension.swift */; };
+		9464FDF02769EA30007D1BB7 /* Font+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9464FDEF2769EA30007D1BB7 /* Font+Extension.swift */; };
 		949040CC275E1F00005DA07B /* ForgotPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949040CB275E1F00005DA07B /* ForgotPasswordViewController.swift */; };
 		94B06E132758C14D0051AD52 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 94B06E122758C14D0051AD52 /* GoogleService-Info.plist */; };
 		94B06E15275938790051AD52 /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B06E14275938790051AD52 /* ImageCell.swift */; };
@@ -67,13 +69,13 @@
 		942FEB4327566FDC0016D504 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		942FEB4427566FDC0016D504 /* ConversationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationViewController.swift; sourceTree = "<group>"; };
 		942FEB4627566FDC0016D504 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
-		942FEB4727566FDC0016D504 /* SelectContactsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectContactsViewController.swift; sourceTree = "<group>"; };
+		942FEB4727566FDC0016D504 /* SelectUsersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectUsersViewController.swift; sourceTree = "<group>"; };
 		942FEB50275670130016D504 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		942FEB51275670130016D504 /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		942FEB55275670250016D504 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		942FEB56275670250016D504 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		942FEB5A275670300016D504 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		942FEB5B275670300016D504 /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		942FEB5B275670300016D504 /* StringExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		942FEB5F2756703F0016D504 /* CustomContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomContainerView.swift; sourceTree = "<group>"; };
 		942FEB602756703F0016D504 /* SendMessageContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendMessageContainerView.swift; sourceTree = "<group>"; };
 		942FEB64275670500016D504 /* CustomTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
@@ -82,7 +84,9 @@
 		942FEB692756705C0016D504 /* MessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		942FEB6E275670680016D504 /* CheckBoxButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckBoxButton.swift; sourceTree = "<group>"; };
 		942FEB6F275670680016D504 /* CustomButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
-		949040C9275DFD20005DA07B /* AppUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUtility.swift; sourceTree = "<group>"; };
+		945136892762661300BAC128 /* ButtonExtention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonExtention.swift; sourceTree = "<group>"; };
+		9464FDED2769E9D2007D1BB7 /* DateExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
+		9464FDEF2769EA30007D1BB7 /* Font+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+Extension.swift"; sourceTree = "<group>"; };
 		949040CB275E1F00005DA07B /* ForgotPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordViewController.swift; sourceTree = "<group>"; };
 		94B06E122758C14D0051AD52 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		94B06E14275938790051AD52 /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
@@ -112,6 +116,7 @@
 		942AF9F827609E3000F35E5E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				942FEB2E27566CF90016D504 /* Assets.xcassets */,
 				942AF9F927609E4F00F35E5E /* PT_Sans */,
 			);
 			path = Resources;
@@ -157,7 +162,6 @@
 				942FEB4F275670130016D504 /* API */,
 				942FEB4027566FDC0016D504 /* Controller */,
 				942FEB3B27566F720016D504 /* Supporting Files */,
-				942FEB2E27566CF90016D504 /* Assets.xcassets */,
 				942FEB3027566CF90016D504 /* LaunchScreen.storyboard */,
 				942FEB3327566CF90016D504 /* Info.plist */,
 				94B06E122758C14D0051AD52 /* GoogleService-Info.plist */,
@@ -177,14 +181,12 @@
 		942FEB4027566FDC0016D504 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				9464FDF12769EBF7007D1BB7 /* Login+Signup */,
 				942FEB4127566FDC0016D504 /* ImageViewController.swift */,
 				942FEB4227566FDC0016D504 /* ChatController.swift */,
-				942FEB4327566FDC0016D504 /* LoginViewController.swift */,
 				942FEB4427566FDC0016D504 /* ConversationViewController.swift */,
-				942FEB4627566FDC0016D504 /* RegisterViewController.swift */,
-				942FEB4727566FDC0016D504 /* SelectContactsViewController.swift */,
+				942FEB4727566FDC0016D504 /* SelectUsersViewController.swift */,
 				9424602D275CFFFC0033694C /* CreateGroupController.swift */,
-				949040CB275E1F00005DA07B /* ForgotPasswordViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -211,9 +213,8 @@
 			isa = PBXGroup;
 			children = (
 				942FEB5A275670300016D504 /* Constants.swift */,
-				942FEB5B275670300016D504 /* Extension.swift */,
-				949040C9275DFD20005DA07B /* AppUtility.swift */,
-				942AFA042761265600F35E5E /* ColorExtention.swift */,
+				9464FDEC2769E993007D1BB7 /* Extension */,
+				9464FDEF2769EA30007D1BB7 /* Font+Extension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -264,6 +265,27 @@
 				942FEB5E2756703F0016D504 /* Custom Views */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		9464FDEC2769E993007D1BB7 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				942FEB5B275670300016D504 /* StringExtension.swift */,
+				942AFA042761265600F35E5E /* ColorExtention.swift */,
+				945136892762661300BAC128 /* ButtonExtention.swift */,
+				9464FDED2769E9D2007D1BB7 /* DateExtension.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		9464FDF12769EBF7007D1BB7 /* Login+Signup */ = {
+			isa = PBXGroup;
+			children = (
+				949040CB275E1F00005DA07B /* ForgotPasswordViewController.swift */,
+				942FEB4627566FDC0016D504 /* RegisterViewController.swift */,
+				942FEB4327566FDC0016D504 /* LoginViewController.swift */,
+			);
+			path = "Login+Signup";
 			sourceTree = "<group>";
 		};
 		9FC07DA13919D4396718EEEC /* Frameworks */ = {
@@ -395,8 +417,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				942FEB4D27566FDC0016D504 /* RegisterViewController.swift in Sources */,
+				9464FDEE2769E9D2007D1BB7 /* DateExtension.swift in Sources */,
 				942FEB4B27566FDC0016D504 /* ConversationViewController.swift in Sources */,
-				949040CA275DFD20005DA07B /* AppUtility.swift in Sources */,
 				942FEB4A27566FDC0016D504 /* LoginViewController.swift in Sources */,
 				942FEB3E27566F720016D504 /* AppDelegate.swift in Sources */,
 				942FEB6A2756705C0016D504 /* ConversationCell.swift in Sources */,
@@ -408,9 +430,10 @@
 				949040CC275E1F00005DA07B /* ForgotPasswordViewController.swift in Sources */,
 				94B06E15275938790051AD52 /* ImageCell.swift in Sources */,
 				942FEB61275670400016D504 /* CustomContainerView.swift in Sources */,
+				9464FDF02769EA30007D1BB7 /* Font+Extension.swift in Sources */,
 				942FEB6C2756705C0016D504 /* MessageCell.swift in Sources */,
 				942FEB70275670680016D504 /* CheckBoxButton.swift in Sources */,
-				942FEB5D275670300016D504 /* Extension.swift in Sources */,
+				942FEB5D275670300016D504 /* StringExtension.swift in Sources */,
 				942FEB58275670250016D504 /* User.swift in Sources */,
 				942FEB4827566FDC0016D504 /* ImageViewController.swift in Sources */,
 				942FEB53275670130016D504 /* DatabaseManager.swift in Sources */,
@@ -420,7 +443,8 @@
 				942FEB71275670680016D504 /* CustomButton.swift in Sources */,
 				942FEB4927566FDC0016D504 /* ChatController.swift in Sources */,
 				942FEB3F27566F720016D504 /* SceneDelegate.swift in Sources */,
-				942FEB4E27566FDC0016D504 /* SelectContactsViewController.swift in Sources */,
+				942FEB4E27566FDC0016D504 /* SelectUsersViewController.swift in Sources */,
+				9451368A2762661300BAC128 /* ButtonExtention.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,37 +12,34 @@ class UserInfoCell: UICollectionViewCell {
     static let reuseIdentifier = "userCell"
     
     let profileImageView: UIImageView = {
-        //imageview
-        let iv = UIImageView()
-        iv.backgroundColor = .white
-        iv.contentMode = .scaleAspectFill
-        iv.clipsToBounds = true
-        iv.layer.borderWidth = 3
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.layer.borderColor = UIColor.white.cgColor
-        return iv
+        let imageView = UIImageView()
+        imageView.backgroundColor = .white
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.borderWidth = 3
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.layer.cornerRadius = 35
+        return imageView
     }()
     
     let nameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-   //     label.text = "full name"
         label.lineBreakMode = .byTruncatingTail
-        label.font = UIFont.boldSystemFont(ofSize: 26)
+        label.font = UIFont.boldSystemFont(ofSize: 21)
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     let checkBox = CheckBox()
-    var profilePadding = 0
+    var profileImagePadding = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-
         contentView.addSubview(profileImageView)
         contentView.addSubview(nameLabel)
-        profileImageView.layer.cornerRadius = 35
         contentView.clipsToBounds = true
         
         configureCheckBox()
@@ -56,7 +53,7 @@ class UserInfoCell: UICollectionViewCell {
         super.layoutSubviews()
     
         profileImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
-        profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CGFloat(profilePadding)).isActive = true
+        profileImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CGFloat(profileImagePadding)).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
         

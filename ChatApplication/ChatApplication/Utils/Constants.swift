@@ -21,5 +21,4 @@ struct Constants {
     static let toId = "toId"
     static let text = "text"
 
-    
 }

@@ -13,21 +13,12 @@ import FirebaseAuth
 class ChatController: UITableViewController, UINavigationControllerDelegate  {
 
     var user: User?
+    var currentUser: User?
     var messages: [Message] = []
     var pickedImage: UIImage?
     
     var imagePickerController = UIImagePickerController()
-    lazy var messageTextField: UITextField = {
-        let textField = UITextField()
-        textField.textColor = .white
-        textField.backgroundColor = .clear
-        textField.layer.cornerRadius = 20
-        textField.attributedPlaceholder = NSAttributedString(
-            string: "Message",
-            attributes: [NSAttributedString.Key.foregroundColor: UIColor.white]
-        )
-        return textField
-    }()
+    var messageTextField = CustomTextField(placeholder: "Message")
     
     lazy var sendButton: UIImageView = {
         let imageView = UIImageView()
@@ -69,20 +60,14 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
         
         configureNavigationBar()
         configureTableView()
-
-        DatabaseManager.shared.getMessages(messageId: getMessageId()) { messages in
-            self.messages = messages
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-                let lastIndex = NSIndexPath(row: self.messages.count - 1, section: 0)
-                self.tableView.scrollToRow(at: lastIndex as IndexPath, at: .bottom, animated: true)
-            }
-        }
+        
+        fetchData()
     }
 
     
     // MARK: - Actions
-    @objc func pickPhoto(){
+    @objc func pickPhoto() {
+        messageTextField.resignFirstResponder()
         imagePickerController.delegate = self
         self.imagePickerController.allowsEditing = true
         self.present(self.imagePickerController, animated:  true, completion:  nil)
@@ -95,24 +80,24 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
         let msgId = getMessageId()
         let isGroupMessage: Bool = user!.isGroup
      
-        if pickedImage == nil && text == "" {
-            return
-        }
+        if pickedImage == nil && text == "" { return }
         
         let values = [ "msgId": msgId, "fromId": uid, "toId": toId, "text": text,"timestamp": Date(), "isGroupMessage": isGroupMessage] as [String : Any]
         let message = Message(dictionary: values)
+        
+        guard let otherUser = user, let currentUser = currentUser else { return }
         
         if pickedImage != nil {
             guard let image = pickedImage else { return }
            
             NetworkManager.shared.uploadImage(image: image, path: "Chat Images") { url in
                 message.imageUrl = url
-                DatabaseManager.shared.addMessage(with: message)
+                DatabaseManager.shared.addMessage(with: message, currentUser: currentUser, otherUser: otherUser)
                 self.pickedImage = nil
             }
         }
         else{
-            DatabaseManager.shared.addMessage(with: message)
+            DatabaseManager.shared.addMessage(with: message, currentUser: currentUser, otherUser: otherUser)
         }
        
         selectPhotoButton.image = UIImage(systemName: "photo.fill")
@@ -121,6 +106,22 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
     
     
     // MARK: - Helper functions
+    func fetchData(){
+        DatabaseManager.shared.getConversations(messageId: getMessageId()) { messages in
+            self.messages = messages
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                let lastIndex = NSIndexPath(row: self.messages.count - 1, section: 0)
+                self.tableView.scrollToRow(at: lastIndex as IndexPath, at: .bottom, animated: true)
+            }
+        }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        DatabaseManager.shared.fetchUser(uid: uid) { user in
+            self.currentUser = user
+        }
+    }
+    
+    
     func getMessageId() -> String {
         guard let uid = Auth.auth().currentUser?.uid else { return "" }
         if user?.isGroup == true {
@@ -153,17 +154,23 @@ class ChatController: UITableViewController, UINavigationControllerDelegate  {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if messages[indexPath.row].imageUrl == nil{
-            let cell = tableView.dequeueReusableCell(withIdentifier: MessageCell.messageCellIdentifier, for: indexPath) as! MessageCell
+        if let imageUrl = messages[indexPath.row].imageUrl {
+            let cell = tableView.dequeueReusableCell(withIdentifier: ImageCell.imageCellIdentifier, for: indexPath) as! ImageCell
             cell.chatMessage = messages[indexPath.row]
             
+            NetworkManager.shared.downloadImage(fromURL: imageUrl) { chatImage in
+                if chatImage != nil {
+                    DispatchQueue.main.async {
+                        cell.chatImageView.image = chatImage
+                    }
+                }
+            }
             return cell
         }
         else{
-            let cell = tableView.dequeueReusableCell(withIdentifier: ImageCell.imageCellIdentifier, for: indexPath) as! ImageCell
-            cell.chatMessage = messages[indexPath.row]
-            cell.chatImageView.image = self.messages[indexPath.row].image
             
+            let cell = tableView.dequeueReusableCell(withIdentifier: MessageCell.messageCellIdentifier, for: indexPath) as! MessageCell
+            cell.chatMessage = messages[indexPath.row]
             return cell
         }
     }
